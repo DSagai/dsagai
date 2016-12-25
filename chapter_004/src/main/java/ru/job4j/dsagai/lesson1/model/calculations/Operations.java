@@ -4,13 +4,20 @@ package ru.job4j.dsagai.lesson1.model.calculations;
  * provides default list of operations for Calculator,
  * and links them to tags.
  * @author dsagai
- * @since 22.12.2016
+ * @since 25.12.2016
  */
 public enum Operations {
     Add("+", new AddOperation()),
     Subtract("-", new SubstractOperation()),
     Divide("/", new DivOperation()),
-    Multiply("*", new MultOperation());
+    Multiply("*", new MultOperation()),
+    Sin("sin", new SinOperation()),
+    Cos("cos", new CosOperation()),
+    Tan("tan", new TanOperation()),
+    Pow("pow", new PowOperation()),
+    Lg("lg", new LgOperation()),
+    Ln("ln", new LnOperation()),
+    Log("log", new LogOperation());
 
 
     /**

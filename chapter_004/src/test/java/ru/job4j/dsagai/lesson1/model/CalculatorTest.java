@@ -67,6 +67,70 @@ public class CalculatorTest {
 
     @Test
     /**
+     * test sin operation
+     */
+    public void arithmeticOperationTestSin() throws Exception {
+        this.calculator.execute(Operations.Sin.getTag(),0.0, Math.PI / 2.0);
+        assertThat(this.calculator.getResult(),is(1.0));
+    }
+
+    @Test
+    /**
+     * test cos operation
+     */
+    public void arithmeticOperationTestCos() throws Exception {
+        this.calculator.execute(Operations.Cos.getTag(),0.0, Math.PI);
+        assertThat(this.calculator.getResult(),is(-1.0));
+    }
+
+    @Test
+    /**
+     * test tan operation
+     */
+    public void arithmeticOperationTestTan() throws Exception {
+        this.calculator.execute(Operations.Tan.getTag(),0.0, 0.0);
+        assertThat(this.calculator.getResult(),is(0.0));
+    }
+
+
+    @Test
+    /**
+     * test pow operation
+     */
+    public void arithmeticOperationTestPow() throws Exception {
+        this.calculator.execute(Operations.Pow.getTag(),2.0, 3.0);
+        assertThat(this.calculator.getResult(),is(8.0));
+    }
+
+    @Test
+    /**
+     * test Ln operation
+     */
+    public void arithmeticOperationTestLn() throws Exception {
+        this.calculator.execute(Operations.Ln.getTag(),0.0, Math.exp(1));
+        assertThat(this.calculator.getResult(),is(1.0));
+    }
+
+    @Test
+    /**
+     * test Lg operation
+     */
+    public void arithmeticOperationTestLg() throws Exception {
+        this.calculator.execute(Operations.Lg.getTag(),0.0, 10.0);
+        assertThat(this.calculator.getResult(),is(1.0));
+    }
+
+    @Test
+    /**
+     * test Log operation
+     */
+    public void arithmeticOperationTestLog() throws Exception {
+        this.calculator.execute(Operations.Log.getTag(),2d, 8d);
+        assertThat(this.calculator.getResult(),is(3d));
+    }
+
+    @Test
+    /**
      * test initialization by default constructor.
      * must by initialized by Operations enum
      */
