@@ -2,7 +2,9 @@ package ru.job4j.dsagai.lesson1;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.job4j.dsagai.lesson1.model.Calculator;
 import ru.job4j.dsagai.lesson1.model.calculations.Operations;
+import ru.job4j.dsagai.lesson1.view.ConsoleView;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -17,7 +19,7 @@ public class InteractCalcTest {
 
     @Before
     public void init() {
-        this.interactCalc = new InteractCalc();
+        this.interactCalc = new InteractCalc(new Calculator(), new ConsoleView());
     }
 
     @Test

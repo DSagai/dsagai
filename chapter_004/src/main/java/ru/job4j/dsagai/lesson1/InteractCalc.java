@@ -36,10 +36,12 @@ public class InteractCalc {
     /**
      * default constructor
      * sets up and inits private properties
+     * @param calculator Calculator.
+     * @param view View.
      */
-    public InteractCalc() {
-        this.calculator = new Calculator();
-        this.view = new ConsoleView();
+    public InteractCalc(Calculator calculator, View view) {
+        this.calculator = calculator;
+        this.view = view;
         this.view.init(this, this.calculator.getOperationTags());
         this.lastOperation = this.calculator.getOperationTags().iterator().next();
         this.lastOperand = 0;
@@ -95,7 +97,7 @@ public class InteractCalc {
      * @param args String[].
      */
     public static void main(String[] args) {
-        InteractCalc interactCalc = new InteractCalc();
+        InteractCalc interactCalc = new InteractCalc(new Calculator(), new ConsoleView());
     }
 
 }
