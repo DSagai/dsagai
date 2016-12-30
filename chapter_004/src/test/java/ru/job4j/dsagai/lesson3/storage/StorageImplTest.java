@@ -14,7 +14,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 /**
- * Created by QQQ on 29.12.2016.
+ * Tests for StorageImpl class
+ * @author dsagai
+ * @since 29.12.2016
  */
 public class StorageImplTest {
     private Storage storage;

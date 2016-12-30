@@ -11,25 +11,34 @@ import java.util.List;
 import java.util.Properties;
 
 
-
-
 /**
- * Created by QQQ on 29.12.2016.
+ * Controls food items quality.
+ * Relocates items between three storages
+ * depending on the items expire process.
  */
 public class ControlQuality {
+    //path to the property file, which defines quality borders
     private final static String PROP_PATH = "lesson3/foodStorApp.properties";
 
-    private final Storage wearHouse;
+    private final Storage warehouse;
     private final Storage shop;
     private final Storage trash;
 
+    //value of default discount, which setups to the new food item.
     private double defaultDiscount;
+    //calculation of expire process depends on currentDate property value.
     private Date currentDate;
 
 
-
-    public ControlQuality(Storage wearHouse, Storage shop, Storage trash, Date currentDate) {
-        this.wearHouse = wearHouse;
+    /**
+     * default constructor.
+     * @param warehouse Storage.
+     * @param shop Storage.
+     * @param trash Storage.
+     * @param currentDate Date.
+     */
+    public ControlQuality(Storage warehouse, Storage shop, Storage trash, Date currentDate) {
+        this.warehouse = warehouse;
         this.shop = shop;
         this.trash = trash;
         this.currentDate = currentDate;
@@ -37,7 +46,9 @@ public class ControlQuality {
     }
 
 
-
+    /**
+     * inits limit property for Limits enum.
+     */
     private void init() {
         Properties properties = new Properties();
         ClassLoader loader = ControlQuality.class.getClassLoader();
@@ -54,11 +65,16 @@ public class ControlQuality {
     }
 
 
+    /**
+     * Places food item into one of thee storages: warehouse, shop or trash.
+     * @param food Food.
+     * @throws StorageLimitExcess
+     */
     public void placeFood(Food food) throws StorageLimitExcess {
         double expireProgress = food.getExpireProgress(this.currentDate);
 
         if (expireProgress < Limits.Fresh.getLimit()) {
-            this.wearHouse.add(food);
+            this.warehouse.add(food);
         } else if (expireProgress < Limits.Medium.getLimit()){
             this.shop.add(food);
         } else if (expireProgress < Limits.Old.getLimit()) {
@@ -70,22 +86,37 @@ public class ControlQuality {
     }
 
 
+    /**
+     * replaces stored items between storages in dependency of expire process.
+     * @throws StorageLimitExcess
+     */
     public void replaceFoods() throws StorageLimitExcess{
-        List<Food> foods = new ArrayList<>(this.wearHouse.poolFoods());
+        List<Food> foods = new ArrayList<>(this.warehouse.poolFoods());
         foods.addAll(this.shop.poolFoods());
         for (Food food : foods){
             placeFood(food);
         }
     }
 
+    /**
+     * getter currentDate.
+     * @return Date.
+     */
     public Date getCurrentDate() {
         return currentDate;
     }
 
+    /**
+     * setter currentDate.
+     * @param currentDate Date.
+     */
     public void setCurrentDate(Date currentDate) {
         this.currentDate = currentDate;
     }
 
+    /**
+     * enum derives three standard borders for product quality.
+     */
     private enum Limits {
         Fresh,
         Medium,
@@ -102,12 +133,29 @@ public class ControlQuality {
         }
     }
 
-
-
-    public static void main(String[] args) {
-        for (Limits limit : Limits.values()){
-            System.out.println(limit.getLimit());
-        }
-
+    /**
+     * getter warehouse.
+     * @return Storage.
+     */
+    public Storage getWarehouse() {
+        return warehouse;
     }
+
+    /**
+     * getter shop
+     * @return Storage.
+     */
+    public Storage getShop() {
+        return shop;
+    }
+
+    /**
+     * getter trash
+     * @return Storage.
+     */
+    public Storage getTrash() {
+        return trash;
+    }
+
+
 }
