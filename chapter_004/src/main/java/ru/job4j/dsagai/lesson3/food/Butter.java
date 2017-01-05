@@ -16,12 +16,27 @@ public class Butter extends Food {
      * Default constructor.
      * @param name String.
      * @param createDate Date.
-     * @param expireDate Date
-     * @param price double
-     * @param fat double
+     * @param expireDate Date.
+     * @param price double.
+     * @param fat double.
      */
     public Butter(String name, Date createDate, Date expireDate, double price, double fat) {
         super(name, createDate, expireDate, price);
+        this.fat = fat;
+    }
+
+    /**
+     * Extended constructor.
+     * @param name String.
+     * @param createDate Date.
+     * @param expireDate Date.
+     * @param price double.
+     * @param recyclable boolean.
+     * @param storeTemp int.
+     * @param fat double.
+     */
+    public Butter(String name, Date createDate, Date expireDate, double price, boolean recyclable, int storeTemp, double fat) {
+        super(name, createDate, expireDate, price, recyclable, storeTemp);
         this.fat = fat;
     }
 

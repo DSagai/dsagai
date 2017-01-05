@@ -82,4 +82,13 @@ public class Trash implements Storage {
     public void clear() {
         foods.clear();
     }
+
+    @Override
+    /**
+     * Always returns false because of Trash has no capacity limit
+     * @return false.
+     */
+    public boolean isFull() {
+        return false;
+    }
 }

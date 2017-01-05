@@ -20,7 +20,7 @@ public interface Storage {
      * @return boolean.
      * @throws StorageLimitExcess
      */
-    boolean add(Food food) throws StorageLimitExcess;
+    boolean add(Food food) throws Exception;
 
     /**
      * method provides group entry for food items.
@@ -28,7 +28,7 @@ public interface Storage {
      * @return boolean.
      * @throws StorageLimitExcess
      */
-    boolean addAll(Collection<Food> foods) throws StorageLimitExcess;
+    boolean addAll(Collection<Food> foods) throws Exception;
 
     /**
      * removes food item from the storage.
@@ -53,4 +53,9 @@ public interface Storage {
      * removes all items from the storage.
      */
     void clear();
+
+    /**
+     * @return true when you excess storage limit
+     */
+    boolean isFull();
 }

@@ -102,4 +102,12 @@ public class StorageImpl implements Storage {
     public void clear() {
         this.foods.clear();
     }
+
+    @Override
+    /**
+     * @return true when you excess storage limit
+     */
+    public boolean isFull() {
+        return this.foods.size() == this.maxCapacity;
+    }
 }

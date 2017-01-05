@@ -83,14 +83,24 @@ public class StorageImplTest {
         assertThat(newStrorage.getFoods().size(), is(0));
     }
 
+    @Test
+    public void isFull() throws Exception {
+        Storage newStrorage = new StorageImpl(2);
+        newStrorage.add(new Vegetable("name1", new Date(), new Date(), 0.0));
+        assertThat(newStrorage.isFull(),is(false));
+        newStrorage.add(new Vegetable("name2", new Date(), new Date(), 0.0));
+        assertThat(newStrorage.isFull(),is(true));
+    }
+
     private void initFill() {
         try {
             this.storage.add(new Vegetable("name1", new Date(), new Date(), 0.0));
-            this.storage.add(new Vegetable("name1", new Date(), new Date(), 0.0));
+            this.storage.add(new Vegetable("name2", new Date(), new Date(), 0.0));
         } catch (Exception e){
             e.printStackTrace();
         }
     }
+
 
 
 }

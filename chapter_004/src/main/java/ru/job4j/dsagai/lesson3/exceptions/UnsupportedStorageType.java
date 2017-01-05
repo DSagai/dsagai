@@ -2,14 +2,15 @@ package ru.job4j.dsagai.lesson3.exceptions;
 
 /**
  * @author dsagai
- * @since 29.12.2016
+ * @since 01.01.2017
  */
-public class StorageLimitExcess extends Exception {
+public class UnsupportedStorageType extends Exception {
+
     /**
      * default constructor
      * @param message String
      */
-    public StorageLimitExcess(String message) {
+    public UnsupportedStorageType(String message){
         super(message);
     }
 }

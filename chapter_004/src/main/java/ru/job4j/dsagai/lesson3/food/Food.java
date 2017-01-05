@@ -9,6 +9,9 @@ import java.util.Date;
  * @since 28.12.2016
  */
 public abstract class Food {
+    private static int DEFAULT_TEMPERATURE = 40;
+    private static boolean DEFAULT_RECYCLABLE = true;
+
     //Brand or name
     private final String name;
     //Date of creation
@@ -19,6 +22,10 @@ public abstract class Food {
     private final double price;
     //discount
     private double discount;
+    //can be recycled
+    private final boolean recyclable;
+    //store temperature degrees Celsius
+    private final int storeTemp;
 
     /**
      * Default constructor.
@@ -33,6 +40,27 @@ public abstract class Food {
         this.expireDate = expireDate;
         this.price = price;
         this.discount = 0d;
+        this.recyclable = Food.DEFAULT_RECYCLABLE;
+        this.storeTemp = Food.DEFAULT_TEMPERATURE;
+    }
+
+    /**
+     * Extended constructor.
+     * @param name String.
+     * @param createDate Date.
+     * @param expireDate Date.
+     * @param price double.
+     * @param recyclable boolean.
+     * @param storeTemp int.
+     */
+    public Food(String name, Date createDate, Date expireDate, double price, boolean recyclable, int storeTemp) {
+        this.name = name;
+        this.createDate = createDate;
+        this.expireDate = expireDate;
+        this.price = price;
+        this.discount = 0d;
+        this.recyclable = recyclable;
+        this.storeTemp = storeTemp;
     }
 
     /**
@@ -110,5 +138,21 @@ public abstract class Food {
         int result = name.hashCode();
         result = 31 * result + createDate.hashCode();
         return result;
+    }
+
+    /**
+     * getter recyclable.
+     * @return boolean recyclable
+     */
+    public boolean isRecyclable() {
+        return recyclable;
+    }
+
+    /**
+     * getter storeTemp.
+     * @return int storeTemp.
+     */
+    public int getStoreTemp() {
+        return storeTemp;
     }
 }

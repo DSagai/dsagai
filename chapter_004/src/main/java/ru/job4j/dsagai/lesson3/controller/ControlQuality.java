@@ -3,6 +3,7 @@ package ru.job4j.dsagai.lesson3.controller;
 import ru.job4j.dsagai.lesson3.exceptions.StorageLimitExcess;
 import ru.job4j.dsagai.lesson3.food.Food;
 import ru.job4j.dsagai.lesson3.storage.Storage;
+import ru.job4j.dsagai.lesson3.util.ConfigReader;
 
 
 import java.util.ArrayList;
@@ -17,8 +18,7 @@ import java.util.Properties;
  * depending on the items expire process.
  */
 public class ControlQuality {
-    //path to the property file, which defines quality borders
-    private final static String PROP_PATH = "lesson3/foodStorApp.properties";
+
 
     private final Storage warehouse;
     private final Storage shop;
@@ -42,27 +42,9 @@ public class ControlQuality {
         this.shop = shop;
         this.trash = trash;
         this.currentDate = currentDate;
-        init();
+        this.defaultDiscount = Double.parseDouble(ConfigReader.getInstance().getProperty("default.discount", "0"));
     }
 
-
-    /**
-     * inits limit property for Limits enum.
-     */
-    private void init() {
-        Properties properties = new Properties();
-        ClassLoader loader = ControlQuality.class.getClassLoader();
-        try {
-            properties.load(loader.getResourceAsStream(PROP_PATH));
-            Limits.Fresh.setLimit(Double.parseDouble(properties.getProperty("borderFresh.fresh","0")));
-            Limits.Medium.setLimit(Double.parseDouble(properties.getProperty("borderFresh.medium","0")));
-            Limits.Old.setLimit(Double.parseDouble(properties.getProperty("borderFresh.expire","0")));
-
-            this.defaultDiscount = Double.parseDouble(properties.getProperty("default.discount","0"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -70,7 +52,7 @@ public class ControlQuality {
      * @param food Food.
      * @throws StorageLimitExcess
      */
-    public void placeFood(Food food) throws StorageLimitExcess {
+    public void placeFood(Food food) throws Exception {
         double expireProgress = food.getExpireProgress(this.currentDate);
 
         if (expireProgress < Limits.Fresh.getLimit()) {
@@ -90,7 +72,7 @@ public class ControlQuality {
      * replaces stored items between storages in dependency of expire process.
      * @throws StorageLimitExcess
      */
-    public void replaceFoods() throws StorageLimitExcess{
+    public void replaceFoods() throws Exception{
         List<Food> foods = new ArrayList<>(this.warehouse.poolFoods());
         foods.addAll(this.shop.poolFoods());
         for (Food food : foods){
@@ -118,18 +100,18 @@ public class ControlQuality {
      * enum derives three standard borders for product quality.
      */
     private enum Limits {
-        Fresh,
-        Medium,
-        Old;
+        Fresh(Double.parseDouble(ConfigReader.getInstance().getProperty("borderFresh.fresh", "0"))),
+        Medium(Double.parseDouble(ConfigReader.getInstance().getProperty("borderFresh.medium", "0"))),
+        Old(Double.parseDouble(ConfigReader.getInstance().getProperty("borderFresh.expire", "0")));
+
+        private Limits(double limit) {
+            this.limit = limit;
+        }
 
         private double limit;
 
         public double getLimit() {
             return limit;
-        }
-
-        public void setLimit(double limit) {
-            this.limit = limit;
         }
     }
 
