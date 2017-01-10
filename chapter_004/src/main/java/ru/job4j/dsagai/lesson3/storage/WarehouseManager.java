@@ -48,12 +48,33 @@ public class WarehouseManager implements Storage {
         this.normTemp = Integer.parseInt(configReader.getProperty("borderTemp.normal","0"));
         this.coldTemp = Integer.parseInt(configReader.getProperty("borderTemp.cold","0"));;
         this.refrigeratorTemp = Integer.parseInt(configReader.getProperty("borderTemp.refrigerator","0"));;
+        this.warehouseCapacity = Integer.parseInt(configReader.getProperty("default.warehouseCapacity","1"));
+    }
+
+    /**
+     * Secondary constructor.
+     * injects into WarehouseManager preinited storage groups.
+     * @param refrigeratorStorages Storage[].
+     * @param coldStorages Storage[].
+     * @param normalStorages Storage[].
+     */
+    public WarehouseManager(Storage[] refrigeratorStorages, Storage[] coldStorages, Storage[] normalStorages) {
+        this.refrigeratorStorages = refrigeratorStorages;
+        this.coldStorages = coldStorages;
+        this.normalStorages = normalStorages;
+
+        ConfigReader configReader = ConfigReader.getInstance();
+        this.normTemp = Integer.parseInt(configReader.getProperty("borderTemp.normal","0"));
+        this.coldTemp = Integer.parseInt(configReader.getProperty("borderTemp.cold","0"));;
+        this.refrigeratorTemp = Integer.parseInt(configReader.getProperty("borderTemp.refrigerator","0"));;
         this.warehouseCapacity = Integer.parseInt(configReader.getProperty("warehouseCapacity","1"));
     }
 
 
-
-
+    /**
+     * method inits storage group by StorageImpl instances.
+     * @param storages Storage[].
+     */
     private void initStorageArray(Storage[] storages) {
         for (int i = 0; i < storages.length; i++){
             storages[i] = new StorageImpl(this.warehouseCapacity);
@@ -72,6 +93,13 @@ public class WarehouseManager implements Storage {
         return add(getStorageGroupByTemp(food), food);
     }
 
+    /**
+     * returns appropriate storage group in condition of
+     * food storage temperature requirements.
+     * @param food Food.
+     * @return Storage[].
+     * @throws UnsupportedStorageType
+     */
     private Storage[] getStorageGroupByTemp(Food food) throws UnsupportedStorageType {
         Storage[] result;
         if (food.getStoreTemp() <= this.refrigeratorTemp) {
@@ -86,6 +114,13 @@ public class WarehouseManager implements Storage {
         return result;
     }
 
+    /**
+     * method puts food item to the storage group
+     * @param storages Storage[].
+     * @param food Food.
+     * @return true if food item was added. In other case return false.
+     * @throws Exception
+     */
     private boolean add(Storage[] storages, Food food) throws Exception {
         boolean result = false;
         for (Storage storage : storages){

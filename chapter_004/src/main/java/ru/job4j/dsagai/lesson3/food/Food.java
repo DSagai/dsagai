@@ -155,4 +155,12 @@ public abstract class Food {
     public int getStoreTemp() {
         return storeTemp;
     }
+
+    @Override
+    public String toString() {
+        return "Food{" +
+                "name='" + name + '\'' +
+                ", createDate=" + createDate +
+                '}';
+    }
 }
