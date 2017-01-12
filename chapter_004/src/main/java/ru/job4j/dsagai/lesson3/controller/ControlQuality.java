@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Relocates items between storages
  * depending on the items expire process.
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
 public class ControlQuality {
     private final static String FRESH_DISCOUNT_BORDER_KEY = "borderFresh.medium";
@@ -33,6 +33,7 @@ public class ControlQuality {
 
     /**
      * Default constructor.
+     * @param currentDate Date.
      */
     public ControlQuality(Date currentDate) {
         this.storages = new CopyOnWriteArrayList<>();
@@ -43,13 +44,22 @@ public class ControlQuality {
 
     /**
      * Specialized counstructor.
-     * @param storages List<Storage>.
+     * @param currentDate Date.
+     * @param storages List<AbstractStorage>.
      */
     public ControlQuality(Date currentDate, List<Storage> storages) {
         this.storages = storages;
         this.defaultDiscount = Double.parseDouble(ConfigReader.getInstance().getProperty(DEFAULT_DISCOUNT_KEY, "0"));
         this.freshBorderForDiscount = Double.parseDouble(ConfigReader.getInstance().getProperty(FRESH_DISCOUNT_BORDER_KEY, "0"));
         this.currentDate = currentDate;
+    }
+
+    /**
+     * adds new Storage item to the controller
+     * @param storage Storage.
+     */
+    public void addStorage(Storage storage) {
+        this.storages.add(storage);
     }
 
     /**

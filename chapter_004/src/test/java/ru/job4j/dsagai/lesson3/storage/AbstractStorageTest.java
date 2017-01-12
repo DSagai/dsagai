@@ -13,12 +13,12 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 /**
- * Test for Storage class
+ * Test for AbstractStorage class
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
-public class StorageTest {
+public class AbstractStorageTest {
     private Storage storage;
     private final int MAX_CAPACITY = 3;
     private final double UPPER_FRESH_BORDER = 0.5;
@@ -30,7 +30,7 @@ public class StorageTest {
 
     @Before
     public void init() {
-        this.storage = new Storage(this.MAX_CAPACITY, this.UPPER_FRESH_BORDER, this.BOTTOM_FRESH_BORDER) {
+        this.storage = new AbstractStorage(this.MAX_CAPACITY, this.UPPER_FRESH_BORDER, this.BOTTOM_FRESH_BORDER) {
         };
         this.format = new SimpleDateFormat("dd/MM/yyyy");
         try {

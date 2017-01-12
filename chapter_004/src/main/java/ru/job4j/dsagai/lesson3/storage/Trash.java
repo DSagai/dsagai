@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Trash Storage
+ * Trash AbstractStorage
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
-public class Trash extends Storage{
+public class Trash extends AbstractStorage {
     private final static String FRESH_BOTTOM_BORDER_KEY = "borderFresh.expire";
 
     /**

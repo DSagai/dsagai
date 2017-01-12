@@ -5,10 +5,13 @@ import java.util.Date;
 /**
  * Meat entity
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
 public class Meat extends Food {
+    private static final int MIN_TEMP = -20;
+    private static final int MAX_TEMP = -5;
+
     private final MeatTypes type;
 
     /**
@@ -20,7 +23,7 @@ public class Meat extends Food {
      * @param type MeatTypes.
      */
     public Meat(String name, Date createDate, Date expireDate, double price, MeatTypes type) {
-        super(name, createDate, expireDate, price);
+        super(name, createDate, expireDate, price, MIN_TEMP, MAX_TEMP);
         this.type = type;
     }
 

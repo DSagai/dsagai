@@ -4,12 +4,12 @@ package ru.job4j.dsagai.lesson3.storage;
 import ru.job4j.dsagai.lesson3.util.ConfigReader;
 
 /**
- * Shop Storage
+ * Shop AbstractStorage
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
-public class Shop extends Storage {
+public class Shop extends AbstractStorage {
     private final static String FRESH_UPPER_BORDER_KEY = "borderFresh.expire";
     private final static String FRESH_BOTTOM_BORDER_KEY = "borderFresh.fresh";
     private final static String DEFAULT_CAPACITY_KEY = "default.warehouseCapacity";

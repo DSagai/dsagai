@@ -3,61 +3,30 @@ package ru.job4j.dsagai.lesson3.storage;
 import ru.job4j.dsagai.lesson3.exceptions.StorageLimitExcess;
 import ru.job4j.dsagai.lesson3.food.Food;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Abstract Storage
+ * Interface Storage provides base operations
+ * for food-storage.
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
-public abstract class Storage {
-    private final List<Food> foodList;
-    private final int maxCapacity;
-    private final double upperBorderFresh;
-    private final double bottomBorderFresh;
-
-    /**
-     * Default constructor.
-     * @param maxCapacity int sets up storage capacity.
-     * @param upperBorderFresh double.
-     */
-    public Storage(int maxCapacity, double upperBorderFresh, double bottomBorderFresh ) {
-        this.maxCapacity = maxCapacity;
-        this.upperBorderFresh = upperBorderFresh;
-        this.bottomBorderFresh = bottomBorderFresh;
-        this.foodList = new CopyOnWriteArrayList<>();
-    }
-
+public interface Storage {
     /**
      * add new food item into storage
      * @param food Food.
      * @throws StorageLimitExcess
      */
-    public void add(Food food) throws StorageLimitExcess {
-        if (this.maxCapacity <= this.foodList.size()) {
-            throw new StorageLimitExcess(String.format("You can't exceed %s units limit!",this.maxCapacity));
-        }
-        this.foodList.add(food);
-    }
+    void add(Food food) throws StorageLimitExcess;
 
     /**
      * @param food Food.
      * @param currentDate Date.
      * @return true when food item is appropriate to store at the storage and storage is not full.
      */
-    public boolean isSuitable(Food food, Date currentDate) {
-        boolean result = false;
-        double expireProgress = food.getExpireProgress(currentDate);
-        if (expireProgress < this.upperBorderFresh && expireProgress >= this.bottomBorderFresh && !isFull()){
-            result = true;
-        }
-        return result;
-    }
+    boolean isSuitable(Food food, Date currentDate);
 
     /**
      * method removes food item from the storage.
@@ -65,41 +34,27 @@ public abstract class Storage {
      * @return true if food item is present at the storage and remove operation is successful,
      * otherwise return false.
      */
-    public boolean remove(Food food) {
-        return this.foodList.remove(food);
-    }
+    boolean remove(Food food);
 
     /**
      * @return true when you excess storage limit.
      */
-    public boolean isFull() {
-        return (this.foodList.size() >= this.maxCapacity);
-    }
+    boolean isFull();
 
     /**
      * removes all items from the storage.
      */
-    public void clear() {
-        this.foodList.clear();
-    }
+    void clear();
 
     /**
      * Retrieves, but does not remove list of stored food items.
      * @return List<Food>.
      */
-    public List<Food> getFoods() {
-        return Collections.unmodifiableList(this.foodList);
-    }
+    List<Food> getFoods();
 
     /**
      * Retrieves and removes list of stored food items.
      * @return List<Food>.
      */
-    public List<Food> poolFoods() {
-        List<Food> result = new ArrayList<>();
-        for (int i = this.foodList.size() - 1; i >= 0; i--){
-            result.add(this.foodList.remove(i));
-        }
-        return result;
-    }
+    List<Food> poolFoods();
 }

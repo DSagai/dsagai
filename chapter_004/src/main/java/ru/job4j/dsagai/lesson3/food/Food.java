@@ -6,8 +6,8 @@ import java.util.Date;
 /**
  * Abstract class Food
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.01
+ * @since 12.01.2017
  */
 public abstract class Food {
 
@@ -19,6 +19,9 @@ public abstract class Food {
     private final Date expireDate;
     //base price for one item
     private final double price;
+    private final int minTemp;
+    private final int maxTemp;
+
     //discount
     private double discount;
 
@@ -29,13 +32,17 @@ public abstract class Food {
      * @param createDate Date.
      * @param expireDate Date.
      * @param price double.
+     * @param minTemp int.
+     * @param maxTemp int.
      */
-    public Food(String name, Date createDate, Date expireDate, double price) {
+    public Food(String name, Date createDate, Date expireDate, double price, int minTemp, int maxTemp) {
         this.name = name;
         this.createDate = createDate;
         this.expireDate = expireDate;
         this.price = price;
         this.discount = 0d;
+        this.minTemp = minTemp;
+        this.maxTemp = maxTemp;
     }
 
 
@@ -124,5 +131,30 @@ public abstract class Food {
                 "name='" + name + '\'' +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    /**
+     * getter minTemp.
+     * @return int degree.
+     */
+    public int getMinTemp() {
+        return minTemp;
+    }
+
+    /**
+     * getter maxTemp.
+     * @return int degree.
+     */
+    public int getMaxTemp() {
+        return maxTemp;
+    }
+
+    /**
+     *
+     * @param temp int.
+     * @return true if temperature is appropriate for storing food item
+     */
+    public boolean isAppropriateTemperature(int temp) {
+        return temp >= this.minTemp && temp <= this.maxTemp;
     }
 }
