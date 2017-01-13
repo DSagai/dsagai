@@ -5,12 +5,13 @@ import java.util.Date;
 /**
  * Butter entity
  * @author dsagai
- * @version 1.01
- * @since 12.01.2017
+ * @version 1.02
+ * @since 13.01.2017
  */
 public class Butter extends Food {
     private static final int MIN_TEMP = -15;
     private static final int MAX_TEMP = -5;
+    private static final double DEFAULT_FAT = 0.76;
 
     private final double fat;
 
@@ -29,6 +30,17 @@ public class Butter extends Food {
         this.fat = fat;
     }
 
+    /**
+     * Default constructor.
+     * @param name
+     * @param createDate
+     * @param expireDate
+     * @param price
+     */
+    public Butter(String name, Date createDate, Date expireDate, double price) {
+        super(name, createDate, expireDate, price, MIN_TEMP, MAX_TEMP);
+        this.fat = DEFAULT_FAT;
+    }
 
     /**
      * getter fat

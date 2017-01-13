@@ -2,6 +2,7 @@ package ru.job4j.dsagai.lesson3.controller;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.job4j.dsagai.lesson3.FoodFactoryForTests;
 import ru.job4j.dsagai.lesson3.food.Food;
 import ru.job4j.dsagai.lesson3.food.Vegetable;
 import ru.job4j.dsagai.lesson3.storage.Shop;
@@ -19,8 +20,8 @@ import static org.junit.Assert.*;
 /**
  * Test for ControlQuality class
  * @author dsagai
- * @version 1.00
- * @since 10.01.2017
+ * @version 1.03
+ * @since 13.01.2017
  */
 public class ControlQualityTest {
     private ControlQuality controller;
@@ -69,10 +70,10 @@ public class ControlQualityTest {
      * old item at shop has to have discount.
      */
     public void placeFood() throws Exception {
-        Food fresh = getFoodUnderFreshLimit("fresh", this.createDate, this.currentDate, this.freshBorder);
-        Food medium = getFoodUnderFreshLimit("medium", this.createDate, this.currentDate, this.mediumBorder);
-        Food old = getFoodUnderFreshLimit("old", this.createDate, this.currentDate, this.oldBorder);
-        Food extraOld = getFoodUnderFreshLimit("extraOld", this.createDate, this.currentDate, this.oldBorder + 0.5);
+        Food fresh = FoodFactoryForTests.getFoodUnderFreshLimit("fresh", this.createDate, this.currentDate, this.freshBorder);
+        Food medium = FoodFactoryForTests.getFoodUnderFreshLimit("medium", this.createDate, this.currentDate, this.mediumBorder);
+        Food old = FoodFactoryForTests.getFoodUnderFreshLimit("old", this.createDate, this.currentDate, this.oldBorder);
+        Food extraOld = FoodFactoryForTests.getFoodUnderFreshLimit("extraOld", this.createDate, this.currentDate, this.oldBorder + 0.5);
 
         this.controller.placeFood(fresh);
         this.controller.placeFood(medium);
@@ -102,9 +103,9 @@ public class ControlQualityTest {
      * "old" item will be at trash
      */
     public void replaceFoods() throws Exception {
-        Food fresh = getFoodUnderFreshLimit("fresh", this.createDate, this.currentDate, this.freshBorder);
-        Food medium = getFoodUnderFreshLimit("medium", this.createDate, this.currentDate, this.mediumBorder);
-        Food old = getFoodUnderFreshLimit("old", this.createDate, this.currentDate, this.oldBorder);
+        Food fresh = FoodFactoryForTests.getFoodUnderFreshLimit("fresh", this.createDate, this.currentDate, this.freshBorder);
+        Food medium = FoodFactoryForTests.getFoodUnderFreshLimit("medium", this.createDate, this.currentDate, this.mediumBorder);
+        Food old = FoodFactoryForTests.getFoodUnderFreshLimit("old", this.createDate, this.currentDate, this.oldBorder);
 
         this.controller.placeFood(fresh);
         this.controller.placeFood(medium);
@@ -124,19 +125,7 @@ public class ControlQualityTest {
         assertThat(this.trash.getFoods().contains(old), is(true));
     }
 
-    /**
-     * method returns Food item with expire progress less than limit defined by input param
-     * @param name String.
-     * @param createDate Date.
-     * @param currentDate Date.
-     * @param limit double.
-     * @return Food item
-     */
-    private Food getFoodUnderFreshLimit(String name, Date createDate, Date currentDate, double limit) {
-        long expTime = (long) ((currentDate.getTime() - createDate.getTime()) / (limit - 0.01) + createDate.getTime());
-        Date expireDate = new Date(expTime);
-        return new Vegetable(name, createDate, expireDate, 0d);
-    }
+
 
 
 }

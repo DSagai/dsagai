@@ -2,6 +2,7 @@ package ru.job4j.dsagai.lesson3.storage;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.job4j.dsagai.lesson3.FoodFactoryForTests;
 import ru.job4j.dsagai.lesson3.food.Food;
 import ru.job4j.dsagai.lesson3.food.Vegetable;
 
@@ -15,8 +16,8 @@ import static org.junit.Assert.*;
 /**
  * Test for AbstractStorage class
  * @author dsagai
- * @version 1.01
- * @since 12.01.2017
+ * @version 1.02
+ * @since 13.01.2017
  */
 public class AbstractStorageTest {
     private Storage storage;
@@ -43,8 +44,8 @@ public class AbstractStorageTest {
 
     @Test
     public void add() throws Exception {
-        Food apple = getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
-        Food tomato = getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
+        Food apple = FoodFactoryForTests.getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
+        Food tomato = FoodFactoryForTests.getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
         this.storage.add(apple);
 
         List<Food> foods = this.storage.getFoods();
@@ -56,9 +57,9 @@ public class AbstractStorageTest {
     @Test
     public void whenSuitableThenReturnTrueElseFalse() throws Exception {
 
-        Food subSuitable = getFoodUnderFreshLimit("suitable", this.createDate, this.currentDate, 0d);
-        Food suitable = getFoodUnderFreshLimit("suitable", this.createDate, this.currentDate, 0.25);
-        Food notSuitable = getFoodUnderFreshLimit("notSuitable", this.createDate, this.currentDate, 0.75);
+        Food subSuitable = FoodFactoryForTests.getFoodUnderFreshLimit("suitable", this.createDate, this.currentDate, 0d);
+        Food suitable = FoodFactoryForTests.getFoodUnderFreshLimit("suitable", this.createDate, this.currentDate, 0.25);
+        Food notSuitable = FoodFactoryForTests.getFoodUnderFreshLimit("notSuitable", this.createDate, this.currentDate, 0.75);
 
         assertThat(this.storage.isSuitable(subSuitable, this.currentDate), is(false));
         assertThat(this.storage.isSuitable(suitable, this.currentDate), is(true));
@@ -67,8 +68,8 @@ public class AbstractStorageTest {
 
     @Test
     public void remove() throws Exception {
-        Food apple = getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
-        Food tomato = getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
+        Food apple = FoodFactoryForTests.getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
+        Food tomato = FoodFactoryForTests.getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
         this.storage.add(apple);
         this.storage.add(tomato);
 
@@ -83,7 +84,7 @@ public class AbstractStorageTest {
 
     @Test
     public void isFull() throws Exception {
-        Food food = getFoodUnderFreshLimit("food", this.createDate, this.currentDate, 0d);
+        Food food = FoodFactoryForTests.getFoodUnderFreshLimit("food", this.createDate, this.currentDate, 0d);
 
         for (int i = 0; i < this.MAX_CAPACITY; i++) {
             assertThat(this.storage.isFull(),is(false));
@@ -94,8 +95,8 @@ public class AbstractStorageTest {
 
     @Test
     public void whenClearThenStorageIsEmpty() throws Exception {
-        Food apple = getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
-        Food tomato = getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
+        Food apple = FoodFactoryForTests.getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
+        Food tomato = FoodFactoryForTests.getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
         this.storage.add(apple);
         this.storage.add(tomato);
 
@@ -108,8 +109,8 @@ public class AbstractStorageTest {
 
     @Test
     public void whenGetThenStorageIsNotEmpty() throws Exception {
-        Food apple = getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
-        Food tomato = getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
+        Food apple = FoodFactoryForTests.getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
+        Food tomato = FoodFactoryForTests.getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
         this.storage.add(apple);
         this.storage.add(tomato);
 
@@ -122,8 +123,8 @@ public class AbstractStorageTest {
 
     @Test
     public void whenPoolThenStorageIsEmpty() throws Exception {
-        Food apple = getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
-        Food tomato = getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
+        Food apple = FoodFactoryForTests.getFoodUnderFreshLimit("apple", this.createDate, this.currentDate, 0d);
+        Food tomato = FoodFactoryForTests.getFoodUnderFreshLimit("tomato", this.createDate, this.currentDate, 0d);
         this.storage.add(apple);
         this.storage.add(tomato);
 
@@ -136,18 +137,6 @@ public class AbstractStorageTest {
         assertThat(foodsAfter.isEmpty(), is(true));
     }
 
-    /**
-     * method returns Food item with expire progress less than limit defined by input param
-     * @param name String.
-     * @param createDate Date.
-     * @param currentDate Date.
-     * @param limit double.
-     * @return Food item
-     */
-    private Food getFoodUnderFreshLimit(String name, Date createDate, Date currentDate, double limit) {
-        long expTime = (long) ((currentDate.getTime() - createDate.getTime()) / (limit - 0.01) + createDate.getTime());
-        Date expireDate = new Date(expTime);
-        return new Vegetable(name, createDate, expireDate, 0d);
-    }
+
 
 }

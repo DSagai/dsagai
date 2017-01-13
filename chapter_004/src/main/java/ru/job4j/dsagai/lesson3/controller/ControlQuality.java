@@ -45,7 +45,7 @@ public class ControlQuality {
     /**
      * Specialized counstructor.
      * @param currentDate Date.
-     * @param storages List<AbstractStorage>.
+     * @param storages List<Storage>.
      */
     public ControlQuality(Date currentDate, List<Storage> storages) {
         this.storages = storages;
