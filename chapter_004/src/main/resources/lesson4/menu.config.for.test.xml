@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE menu SYSTEM "listMenu.dtd">
+
+<menu>
+        <menuItem name="Tasks">
+            <menuItem name="FirstTask" action="FirstAction"/>
+            <menuItem name="SecondTask" action="SecondAction"/>
+        </menuItem>
+        <menuItem name="Exit" action = "ExitAction"/>
+</menu>

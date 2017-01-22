@@ -1,0 +1,6 @@
+<!--treeMenu.dtd-->
+<!ELEMENT menu (menuItem)>
+<!ELEMENT menuItem (menuItem*)>
+        <!ATTLIST menuItem name CDATA #REQUIRED>
+        <!ATTLIST menuItem action (Empty|FirstAction|SecondAction|ExitAction) "Empty">
+
