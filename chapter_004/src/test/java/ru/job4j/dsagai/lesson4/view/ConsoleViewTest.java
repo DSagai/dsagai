@@ -4,6 +4,7 @@ import org.junit.Test;
 import ru.job4j.dsagai.lesson4.controller.Controller;
 import ru.job4j.dsagai.lesson4.model.MockModel;
 import ru.job4j.dsagai.lesson4.model.Model;
+import ru.job4j.dsagai.lesson4.util.JaxbMenuLoader;
 import ru.job4j.dsagai.lesson4.view.menu.Executable;
 import ru.job4j.dsagai.lesson4.view.menu.MultiItemMenu;
 import ru.job4j.dsagai.lesson4.view.menu.NavigableMenu;
@@ -19,8 +20,8 @@ import static org.junit.Assert.*;
  * Test for MVC application with executable console menu.
  *
  * @author dsagai
- * @version 1.00
- * @since 22.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 
 public class ConsoleViewTest {
@@ -30,6 +31,7 @@ public class ConsoleViewTest {
     public void update() throws Exception {
         Model model = new MockModel();
         View view = new ConsoleView(model);
+        view.setMenuLoader(JaxbMenuLoader.getInstance());
         Controller controller = Controller.getInstance();
         controller.setModel(model);
         controller.setView(view);

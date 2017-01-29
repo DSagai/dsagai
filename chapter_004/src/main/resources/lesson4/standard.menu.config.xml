@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE menu SYSTEM "listMenu.dtd">
 
-<menu>
-    <menuItem name="Root">
-        <menuItem name="Tasks">
+<menu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="menu.schema.xsd">
+    <menuItem name="Root" action="Empty">
+        <menuItem name="Tasks" action="Empty">
             <menuItem name="FirstTask" action="FirstAction"/>
             <menuItem name="SecondTask" action="SecondAction"/>
         </menuItem>

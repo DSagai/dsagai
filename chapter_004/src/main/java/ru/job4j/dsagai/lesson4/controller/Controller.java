@@ -2,6 +2,7 @@ package ru.job4j.dsagai.lesson4.controller;
 
 import ru.job4j.dsagai.lesson4.model.MockModel;
 import ru.job4j.dsagai.lesson4.model.Model;
+import ru.job4j.dsagai.lesson4.util.JaxbMenuLoader;
 import ru.job4j.dsagai.lesson4.view.ConsoleView;
 import ru.job4j.dsagai.lesson4.view.View;
 
@@ -9,8 +10,8 @@ import ru.job4j.dsagai.lesson4.view.View;
  * Mock controller.
  *
  * @author dsagai
- * @version 1.00
- * @since 18.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 
 public class Controller {
@@ -103,6 +104,7 @@ public class Controller {
     public static void main(String[] args) {
         Model model = new MockModel();
         View view = new ConsoleView(model);
+        view.setMenuLoader(JaxbMenuLoader.getInstance());
 
         Controller controller = Controller.getInstance();
         controller.setModel(model);

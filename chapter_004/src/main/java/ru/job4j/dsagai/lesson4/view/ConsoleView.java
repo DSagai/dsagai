@@ -3,9 +3,12 @@ package ru.job4j.dsagai.lesson4.view;
 
 
 import ru.job4j.dsagai.lesson4.model.Model;
+import ru.job4j.dsagai.lesson4.util.JaxbMenuLoader;
 import ru.job4j.dsagai.lesson4.util.MenuLoader;
+import ru.job4j.dsagai.lesson4.util.PomMenuLoader;
 import ru.job4j.dsagai.lesson4.view.menu.Executable;
 import ru.job4j.dsagai.lesson4.view.menu.ListConsoleMenu;
+import ru.job4j.dsagai.lesson4.view.menu.MultiItemMenu;
 
 
 import java.io.BufferedReader;
@@ -18,8 +21,8 @@ import java.io.InputStreamReader;
  * implementation of View interface for
  * communication with user through console.
  * @author dsagai
- * @version 1.00
- * @since 19.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 public class ConsoleView implements View {
     private static String MENU_CONFIG = "standard.menu.config.xml";
@@ -29,6 +32,8 @@ public class ConsoleView implements View {
     private final ConsoleReader consoleReader;
 
     private ListConsoleMenu menu;
+
+    private MenuLoader menuLoader;
 
     /**
      * Default constructor.
@@ -54,10 +59,19 @@ public class ConsoleView implements View {
      * method inits menu object.
      */
     private void initMenu() {
-        this.menu = new ListConsoleMenu();
-        MenuLoader loader = MenuLoader.getInstance();
-        loader.init(MENU_CONFIG);
-        loader.loadMenu(menu);
+        if (this.menuLoader == null) {
+            throw new RuntimeException("menuLoader was not initialized!");
+        }
+        this.menuLoader.init(MENU_CONFIG);
+        this.menuLoader.loadMenu(this);
+    }
+
+    /**
+     * setter for MenuLoader field
+     * @param menuLoader MenuLoader.
+     */
+    public void setMenuLoader(MenuLoader menuLoader) {
+        this.menuLoader = menuLoader;
     }
 
     @Override
@@ -81,6 +95,17 @@ public class ConsoleView implements View {
         this.consoleReader.interrupt();
     }
 
+    @Override
+    /**
+     * setter for menu property
+     * @param menu MultiItemMenu
+     */
+    public void setMenu(MultiItemMenu menu) {
+        if (menu instanceof ListConsoleMenu) {
+            this.menu = (ListConsoleMenu) menu;
+        }
+    }
+
 
     /**
      * method executes command received
@@ -95,7 +120,14 @@ public class ConsoleView implements View {
         }
     }
 
-
+    @Override
+    /**
+     * method returns appropriate class of menu object for this View implementation
+     * @return Class menu class
+     */
+    public Class getMenuClass() {
+        return ListConsoleMenu.class;
+    }
 
     /**
      * ConsoleReader

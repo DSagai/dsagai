@@ -4,8 +4,8 @@ package ru.job4j.dsagai.lesson4.view.menu;
  * Interface defines base data type for menu items
  *
  * @author dsagai
- * @version 1.00
- * @since 21.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 
 public interface MenuItem extends Drawable {
@@ -21,4 +21,11 @@ public interface MenuItem extends Drawable {
      * @return String.
      */
     String getName();
+
+    /**
+     * method setups key and prefix properties
+     * @param key String.
+     * @param formatPrefix String.
+     */
+    void init(String key, String formatPrefix);
 }
