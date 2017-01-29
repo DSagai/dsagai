@@ -1,8 +1,10 @@
 package ru.job4j.dsagai.lesson4.view.menu;
 
+import ru.job4j.dsagai.lesson4.view.menu.actions.Actions;
 import ru.job4j.dsagai.lesson4.view.menu.actions.MenuAction;
 
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,19 +13,26 @@ import java.util.List;
  * for menu item at console application.
  *
  * @author dsagai
- * @version 1.00
- * @since 18.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 
+@XmlRootElement(name = "menuItem")
 public  class ConsoleMenuItem implements NavigableMenu, Executable{
     private final static String PREFIX = "----";
 
-    private final String key;
-    private final String name;
+    private String key;
 
-    private final String formatPrefix;
-    private MenuAction action;
+    @XmlAttribute(name = "name")
+    private String name;
 
+    private String formatPrefix;
+
+    @XmlAttribute(name = "action")
+    private Actions action;
+
+
+    @XmlAnyElement(lax = true)
     private final List<MenuItem> children = new ArrayList<>();
 
 
@@ -39,6 +48,8 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
         this.formatPrefix = formatPrefix;
     }
 
+    public ConsoleMenuItem() {
+    }
 
     /**
      * getter for key.
@@ -59,6 +70,26 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
 
     @Override
     /**
+     * method setups key and prefix properties
+     * @param key String.
+     * @param prefix String.
+     */
+    public void init(String key, String formatPrefix) {
+        this.key = key;
+        this.formatPrefix = formatPrefix;
+        for (int i = 0; i < this.children.size(); i++){
+            children.get(i).init(String.format("%s.%s",this.getKey(),i + 1),this.formatPrefix + PREFIX);
+        }
+    }
+
+    @Override
+    @Deprecated
+    public void init() {
+        init("", "");
+    }
+
+    @Override
+    /**
      * method sends request to a storage for creating and placing into it new menu item with defined name.
      * if creation was successful then method returns created item, otherwise it returns null.
      * @param name String.
@@ -71,6 +102,8 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
         this.children.add(item);
         return item;
     }
+
+
 
 
     @Override
@@ -118,7 +151,7 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
      */
     public void execute() {
         if (this.action != null) {
-            this.action.execute();
+            this.action.getAction().execute();
         }
     }
 
@@ -127,9 +160,8 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
      * method setups action for the menu item.
      * @param action MenuAction
      */
-    public void setMenuAction(MenuAction action) {
+    public void setMenuAction(Actions action) {
         this.action = action;
     }
-
 
 }

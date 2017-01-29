@@ -1,5 +1,6 @@
 package ru.job4j.dsagai.lesson4.view.menu;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +9,15 @@ import java.util.List;
  * of MultiItemMenu for console application.
  *
  * @author dsagai
- * @version 1.00
- * @since 21.01.2017
+ * @version 1.01
+ * @since 29.01.2017
  */
 
+@XmlRootElement(name = "menu")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ListConsoleMenu implements NavigableMenu, Drawable {
+
+    @XmlAnyElement(lax = true)
     private List<MenuItem> items;
 
     /**
@@ -44,6 +49,16 @@ public class ListConsoleMenu implements NavigableMenu, Drawable {
         MenuItem item = new ConsoleMenuItem(String.valueOf(this.items.size() + 1), name, "");
         this.items.add(item);
         return item;
+    }
+
+    @Override
+    /**
+     * reinitialize values of internal properties: key and formatPrefix
+     */
+    public void init() {
+        for (int i = 0; i < this.items.size(); i++) {
+            this.items.get(i).init(String.valueOf(i + 1), "");
+        }
     }
 
     @Override

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="menu">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="menuItem" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="menuItem">
+        <xsd:complexType>
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:attribute name="action" use="required">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="Empty"/>
+                        <xsd:enumeration value="ExitAction"/>
+                        <xsd:enumeration value="FirstAction"/>
+                        <xsd:enumeration value="SecondAction"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:sequence>
+                <xsd:element ref="menuItem" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
