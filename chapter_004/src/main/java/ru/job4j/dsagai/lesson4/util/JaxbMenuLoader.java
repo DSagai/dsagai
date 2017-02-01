@@ -75,7 +75,6 @@ public class JaxbMenuLoader implements MenuLoader {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             view.setMenu(menu);
         }
 
