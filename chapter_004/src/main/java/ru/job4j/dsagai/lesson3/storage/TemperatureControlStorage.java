@@ -97,4 +97,15 @@ public class TemperatureControlStorage implements Storage {
     public List<Food> poolFoods() {
         return this.storage.getFoods();
     }
+
+    @Override
+    /**
+     * Retrieves and removes list of stored food items, which expire progress has exceeded limit for
+     * this type jf storage.
+     * @param currentDate Date to determine food expire progress
+     * @return List<Food>.
+     */
+    public List<Food> getExpiredFoods(Date currentDate) {
+        return this.storage.getExpiredFoods(currentDate);
+    }
 }

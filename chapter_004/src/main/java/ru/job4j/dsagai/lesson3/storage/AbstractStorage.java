@@ -12,8 +12,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Abstract AbstractStorage
  * @author dsagai
- * @version 1.01
- * @since 12.01.2017
+ * @version 1.02
+ * @since 02.01.2017
  */
 public abstract class AbstractStorage implements Storage {
     private final List<Food> foodList;
@@ -106,6 +106,22 @@ public abstract class AbstractStorage implements Storage {
         List<Food> result = new ArrayList<>();
         for (int i = this.foodList.size() - 1; i >= 0; i--){
             result.add(this.foodList.remove(i));
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves and removes list of stored food items, which expire progress has exceeded limit for
+     * this type jf storage.
+      * @param currentDate Date to determine food expire progress
+     * @return List<Food>.
+     */
+    public List<Food> getExpiredFoods(Date currentDate){
+        List<Food> result = new ArrayList<>();
+        for (int i = this.foodList.size() - 1; i >= 0; i--){
+            if (!isSuitable(this.foodList.get(i), currentDate)) {
+                result.add(this.foodList.remove(i));
+            }
         }
         return result;
     }

@@ -98,4 +98,13 @@ public class SmartTrash implements Storage {
     public List<Food> poolFoods() {
         return this.trash.poolFoods();
     }
+
+    @Override
+    /**
+     * does nothing.
+     * @return List<Food> empty list.
+     */
+    public List<Food> getExpiredFoods(Date currentDate) {
+        return this.trash.getExpiredFoods(currentDate);
+    }
 }

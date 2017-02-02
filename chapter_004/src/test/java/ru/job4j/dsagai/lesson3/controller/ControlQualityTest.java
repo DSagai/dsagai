@@ -81,13 +81,10 @@ public class ControlQualityTest {
         this.controller.placeFood(extraOld);
 
         assertThat(this.warehouse.getFoods().contains(fresh), is(true));
-        assertThat(fresh.getDiscount() == 0, is(true));
 
         assertThat(this.shop.getFoods().contains(medium), is(true));
-        assertThat(medium.getDiscount() == 0, is(true));
 
         assertThat(this.shop.getFoods().contains(old), is(true));
-        assertThat(old.getDiscount() != 0, is(true));
 
         assertThat(this.trash.getFoods().contains(extraOld), is(true));
 

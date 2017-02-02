@@ -37,7 +37,7 @@ public class JaxbMenuLoaderTest {
         menuField.setAccessible(true);
         MultiItemMenu menu = (MultiItemMenu)menuField.get(view);
 
-        loader.loadMenu(view);
+
         Field itemsField = menu.getClass().getDeclaredField("items");
         itemsField.setAccessible(true);
         List<MenuItem> items = (List<MenuItem>)itemsField.get(menu);

@@ -4,6 +4,7 @@ import ru.job4j.dsagai.lesson3.food.Food;
 import ru.job4j.dsagai.lesson3.util.ConfigReader;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +40,15 @@ public class Trash extends AbstractStorage {
      * @return List<Food> empty list.
      */
     public List<Food> poolFoods() {
+        return new ArrayList<Food>();
+    }
+
+    @Override
+    /**
+     * does nothing.
+     * @return List<Food> empty list.
+     */
+    public List<Food> getExpiredFoods(Date currentDate) {
         return new ArrayList<Food>();
     }
 }

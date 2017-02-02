@@ -10,8 +10,8 @@ import java.util.List;
  * Interface Storage provides base operations
  * for food-storage.
  * @author dsagai
- * @version 1.01
- * @since 12.01.2017
+ * @version 1.02
+ * @since 02.02.2017
  */
 public interface Storage {
     /**
@@ -57,4 +57,12 @@ public interface Storage {
      * @return List<Food>.
      */
     List<Food> poolFoods();
+
+    /**
+     * Retrieves and removes list of stored food items, which expire progress has exceeded limit for
+     * this type jf storage.
+     * @param currentDate Date to determine food expire progress
+     * @return List<Food>.
+     */
+    List<Food> getExpiredFoods(Date currentDate);
 }
