@@ -21,6 +21,10 @@ public class Controller {
     private Model model;
 
 
+    /**
+     * returns instance of Controller
+     * @return Controller
+     */
     public static Controller getInstance(){
         if (instance == null) {
             instance = new Controller();

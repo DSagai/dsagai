@@ -31,6 +31,10 @@ public class JaxbMenuLoader implements MenuLoader {
     private final JAXBContext context;
 
 
+    /**
+     * returns MenuLoader instance.
+     * @return MenuLoader
+     */
     public static MenuLoader getInstance(){
         if (JaxbMenuLoader.instance == null) {
             try {
@@ -42,7 +46,9 @@ public class JaxbMenuLoader implements MenuLoader {
         return JaxbMenuLoader.instance;
     }
 
-
+    /**
+     * private default constructor
+     */
     private JaxbMenuLoader() throws JAXBException {
         this.context = JAXBContext.newInstance(ListConsoleMenu.class, ConsoleMenuItem.class, Actions.class);
     }

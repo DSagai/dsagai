@@ -1,15 +1,13 @@
 package ru.job4j.dsagai.lesson4.util;
 
 import ru.job4j.dsagai.lesson4.view.View;
-import ru.job4j.dsagai.lesson4.view.menu.MultiItemMenu;
 
-import java.lang.reflect.Constructor;
 
 /**
- * TODO: add comments
+ * Interface declares standard methods for menu loader
  *
  * @author dsagai
- * @version TODO: set version
+ * @version 1.01
  * @since 29.01.2017
  */
 

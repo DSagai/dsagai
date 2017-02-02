@@ -30,6 +30,10 @@ public class PomMenuLoader implements MenuLoader {
     private Document document;
 
 
+    /**
+     * returns MenuLoader instance.
+     * @return MenuLoader
+     */
     public static MenuLoader getInstance(){
         if (instance == null) {
             instance = new PomMenuLoader();
@@ -38,6 +42,9 @@ public class PomMenuLoader implements MenuLoader {
     }
 
 
+    /**
+     * private default constructor
+     */
     private PomMenuLoader() {
     }
 

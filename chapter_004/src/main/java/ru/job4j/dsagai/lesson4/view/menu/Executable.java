@@ -2,7 +2,7 @@ package ru.job4j.dsagai.lesson4.view.menu;
 
 
 import ru.job4j.dsagai.lesson4.view.menu.actions.Actions;
-import ru.job4j.dsagai.lesson4.view.menu.actions.MenuAction;
+
 
 /**
  * Definition for menu item data type which supports executing some defined actions

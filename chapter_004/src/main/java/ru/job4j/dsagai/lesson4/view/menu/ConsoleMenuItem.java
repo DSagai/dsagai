@@ -1,7 +1,7 @@
 package ru.job4j.dsagai.lesson4.view.menu;
 
 import ru.job4j.dsagai.lesson4.view.menu.actions.Actions;
-import ru.job4j.dsagai.lesson4.view.menu.actions.MenuAction;
+
 
 
 import javax.xml.bind.annotation.*;
@@ -37,7 +37,7 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
 
 
     /**
-     * defaul constructor
+     * default constructor
      * @param key String.
      * @param name String.
      * @param formatPrefix String.
@@ -84,6 +84,9 @@ public  class ConsoleMenuItem implements NavigableMenu, Executable{
 
     @Override
     @Deprecated
+    /**
+     * reinitialize values of internal properties: key and formatPrefix
+     */
     public void init() {
         init("", "");
     }
