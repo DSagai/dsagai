@@ -2,7 +2,11 @@ package ru.job4j.dsagai.lesson5.templates;
 
 import ru.job4j.dsagai.lesson5.exceptions.KeyException;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * SimpleGenerator class generates string in defined format
@@ -13,6 +17,7 @@ import java.util.Map;
  */
 
 public class SimpleGenerator implements Template {
+    private final Pattern pattern = Pattern.compile("\\$\\{.+?}");
 
     @Override
     /**
@@ -23,6 +28,27 @@ public class SimpleGenerator implements Template {
      * @return
      */
     public String generate(String template, Map<String, String> data) throws KeyException {
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        Set<String> usedKeys = new HashSet<>();
+        String key = null;
+
+        Matcher matcher = this.pattern.matcher(template);
+        int beginIndex = 0;
+        while (matcher.find()){
+            key = matcher.group().substring(2, matcher.group().length() - 1);
+            if (!data.containsKey(key)) {
+                throw new KeyException(String.format("Key %s was not found!", key));
+            }
+            stringBuilder.append(template.substring(beginIndex, matcher.start()));
+            stringBuilder.append(data.get(key));
+            beginIndex = matcher.end();
+            usedKeys.add(key);
+        }
+        stringBuilder.append(template.substring(beginIndex, template.length()));
+
+        if (usedKeys.size() != data.size()){
+            throw new KeyException("data contains redundant keys!");
+        }
+        return stringBuilder.toString();
     }
 }
