@@ -1,7 +1,10 @@
 package ru.job4j.dsagai.lesson1.model;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import ru.job4j.dsagai.lesson1.exceptions.UnsupportedArithmaticOperation;
 import ru.job4j.dsagai.lesson1.model.calculations.AddOperation;
 import ru.job4j.dsagai.lesson1.model.calculations.ArithmeticOperation;
 import ru.job4j.dsagai.lesson1.model.calculations.Operations;
@@ -22,10 +25,20 @@ import static org.junit.Assert.*;
 public class CalculatorTest {
 
     private Calculator calculator;
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+
 
     @Before
     public void init(){
         this.calculator = new Calculator();
+    }
+
+    @Test
+    public void whenUnsupportedOperationThenException() throws Exception {
+        this.exception.expect(UnsupportedArithmaticOperation.class);
+        this.calculator.execute("fakeOperation",1d, 2d);
     }
 
     @Test

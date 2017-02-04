@@ -1,20 +1,14 @@
 package ru.job4j.dsagai.lesson5.exceptions;
 
 /**
- * TODO: add comments
+ * Exception for violating string generator rules
  *
  * @author dsagai
- * @version TODO: set version
+ * @version 1.01
  * @since 03.02.2017
  */
 
 public class KeyException extends Exception {
-    /**
-     * default constructor
-     */
-    public KeyException() {
-        super();
-    }
 
     /**
      * constructor with specified message
