@@ -38,6 +38,7 @@ public class WinsCountConditionTest {
 
         this.condition.addRoundResult(this.playerOne);
         assertThat(this.condition.isVictory(), is(true));
+        assertThat(this.condition.getWinnerId(), is(this.playerOne));
     }
 
     @Test

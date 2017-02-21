@@ -3,9 +3,6 @@ package ru.job4j.dsagai.exam.server.game.conditions;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -41,6 +38,7 @@ public class SequenceConditionTest {
 
         this.condition.addRoundResult(this.playerOne);
         assertThat(this.condition.isVictory(), is(true));
+        assertThat(this.condition.getWinnerId(), is(playerOne));
 
     }
 

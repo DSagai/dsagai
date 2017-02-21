@@ -71,6 +71,17 @@ public class TicTacToe implements GameRound {
 
     @Override
     /**
+     * game turn method
+     * @param player int players personal identity
+     * @param cell GameCell selected by player game cell.
+     * @return boolean. Returns true is game turn was accepted, and false if not.
+     */
+    public boolean turn(int player, GameCell cell) {
+        return turn(player, cell.getX(), cell.getY());
+    }
+
+    @Override
+    /**
      *
      * @return int winner id or nil if draw happens.
      */

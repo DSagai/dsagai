@@ -1,6 +1,9 @@
 package ru.job4j.dsagai.exam.server.game.roles;
 
+import ru.job4j.dsagai.exam.exceptions.UnexpectedMessageType;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
+
+import java.io.IOException;
 
 /**
  * Player could participate game session
@@ -15,6 +18,6 @@ public interface Player extends Spectator {
      * make next turn.
      * @param game GameRound current game round.
      */
-    void makeTurn(GameRound game);
+    void makeTurn(GameRound game) throws IOException, UnexpectedMessageType, ClassNotFoundException;
 
 }

@@ -28,4 +28,11 @@ public interface WinCondition {
      * @return true when victory is achieved, otherwise returns false
      */
     boolean isVictory();
+
+    /**
+     *
+     * @return winnerId or nil if draw happened
+     */
+    int getWinnerId();
+
 }

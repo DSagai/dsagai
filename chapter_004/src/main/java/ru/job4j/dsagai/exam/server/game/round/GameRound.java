@@ -26,9 +26,17 @@ public interface GameRound {
      * @param player int players personal identity
      * @param x int.
      * @param y int.
-     * @return boolean Returns true is game turn was accepted, and false if not.
+     * @return boolean. Returns true is game turn was accepted, and false if not.
      */
     boolean turn(int player, int x, int y);
+
+    /**
+     * game turn method
+     * @param player int players personal identity
+     * @param cell GameCell selected by player game cell.
+     * @return boolean. Returns true is game turn was accepted, and false if not.
+     */
+    boolean turn(int player, GameCell cell);
 
     /**
      *

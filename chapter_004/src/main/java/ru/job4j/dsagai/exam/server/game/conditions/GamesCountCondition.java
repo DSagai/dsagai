@@ -3,26 +3,32 @@ package ru.job4j.dsagai.exam.server.game.conditions;
 import java.util.*;
 
 /**
- * Win condition, which requires defined number of victories to win
+ * Game finishes when defined number of rounds was played.
+ * But after last round is draw score, then game continues till first win.
+ * If one of the players is ahead with advantage more than remaining rounds, then game also finishes.
  *
  * @author dsagai
  * @version 1.00
- * @since 13.02.2017
+ * @since 17.02.2017
  */
 
-public class WinsCountCondition implements WinCondition {
-    private final Map<Integer, Integer> winners;
-    private final int winsCount;
+public class GamesCountCondition implements WinCondition {
+    private final int gamesCount;
+    private int currentRound;
+    private final Map<Integer,Integer> winners;
+    private int winnerId;
     private boolean victory;
-    private int lastWinnerId;
+
 
     /**
-     * default constructor.
-     * @param winsCount int number of victories required to win
+     * default constructor
+     * @param gamesCount int.
      */
-    public WinsCountCondition(int winsCount) {
-        this.winners = new HashMap<>();
-        this.winsCount = winsCount;
+    public GamesCountCondition(int gamesCount) {
+        this.gamesCount = gamesCount;
+        this.winners = new TreeMap<>();
+        this.winnerId = 0;
+        this.victory = false;
     }
 
     @Override
@@ -36,8 +42,8 @@ public class WinsCountCondition implements WinCondition {
         } else {
             this.winners.put(winnerId, 1);
         }
+        this.currentRound++;
         checkCondition(winnerId);
-        this.lastWinnerId = winnerId;
     }
 
     /**
@@ -45,7 +51,22 @@ public class WinsCountCondition implements WinCondition {
      * @param winnerId int.
      */
     private void checkCondition(int winnerId) {
-        if (this.winners.get(winnerId) >= this.winsCount && winnerId != 0) {
+        int[] bestPlayer = {0, 0};
+        int[] secondPlayer = {0, 0};
+        for (Map.Entry<Integer, Integer> entry : this.winners.entrySet()){
+            if (entry.getKey() != 0 && entry.getValue() >= bestPlayer[1]) {
+                secondPlayer = Arrays.copyOf(bestPlayer, bestPlayer.length);
+                bestPlayer[0] = entry.getKey();
+                bestPlayer[1] = entry.getValue();
+            }
+        }
+        if (this.currentRound >= this.gamesCount){
+            if (bestPlayer[1] > secondPlayer[1]){
+                this.winnerId = bestPlayer[0];
+                this.victory = true;
+            }
+        } else if (bestPlayer[1] - secondPlayer[1] > this.gamesCount - this.currentRound) {
+            this.winnerId = bestPlayer[0];
             this.victory = true;
         }
     }
@@ -82,6 +103,6 @@ public class WinsCountCondition implements WinCondition {
      * @return winnerId or nil if draw happened
      */
     public int getWinnerId() {
-        return isVictory() ? this.lastWinnerId : 0;
+        return this.winnerId;
     }
 }

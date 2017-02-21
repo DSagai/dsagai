@@ -73,9 +73,18 @@ public class SequenceCondition implements WinCondition {
     @Override
     /**
      *
-     * @return true when victory is achieved, otherwise returns false
+     * @return true when game over condition is achieved, otherwise returns false
      */
     public boolean isVictory() {
         return this.victory;
+    }
+
+    @Override
+    /**
+     *
+     * @return winnerId or nil if draw happened
+     */
+    public int getWinnerId() {
+        return this.winners.get(this.winners.size() - 1);
     }
 }

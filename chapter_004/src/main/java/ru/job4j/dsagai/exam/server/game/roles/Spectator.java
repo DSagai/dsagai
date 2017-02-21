@@ -2,6 +2,8 @@ package ru.job4j.dsagai.exam.server.game.roles;
 
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 
+import java.io.IOException;
+
 /**
  * Representation of a client at the server side.
  * Spectator could observe game process.
@@ -17,11 +19,17 @@ public interface Spectator {
      * sends actual game info to client
      * @param game GameRound current
      */
-    void refreshField(GameRound game);
+    void refreshField(GameRound game)  throws IOException;
 
     /**
      * sends text message to client
      * @param message
      */
-    void showMessage(String message);
+    void showMessage(String message)  throws IOException;
+
+    /**
+     *
+     * @return true if connection is still active, otherwise returns false
+     */
+    boolean isConnected();
 }
