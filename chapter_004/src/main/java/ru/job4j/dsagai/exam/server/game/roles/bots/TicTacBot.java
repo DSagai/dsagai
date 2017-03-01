@@ -38,12 +38,5 @@ public class TicTacBot implements Player {
      */
     public void showMessage(String message) {}
 
-    @Override
-    /**
-     * fake method. Bot does not use network connection.
-     * That's why it is always connected
-     */
-    public boolean isConnected() {
-        return true;
-    }
+
 }

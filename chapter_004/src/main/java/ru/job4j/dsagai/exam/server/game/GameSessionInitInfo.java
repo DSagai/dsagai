@@ -1,0 +1,83 @@
+package ru.job4j.dsagai.exam.server.game;
+
+import ru.job4j.dsagai.exam.server.game.conditions.WinConditionTypes;
+import ru.job4j.dsagai.exam.server.game.round.GameTypes;
+
+import java.io.Serializable;
+
+
+/**
+ * Entity class for transfer information required for GameSession initialization
+ *
+ * @author dsagai
+ * @version 1.00
+ * @since 28.02.2017
+ */
+
+public final class GameSessionInitInfo implements Serializable {
+    //defines win condition.
+    private final WinConditionTypes winConditionType;
+    //param for WinCondition initialization.
+    private final int count;
+    //defines game params, such as game field size, count of players, etc.
+    private final GameTypes gameType;
+
+    /**
+     * 0 - don't add bot player
+     * 1 - add bot as the first player
+
+     * 2 - add bot as the second player
+     */
+    private final int addBot;
+
+    /**
+     * default constructor
+     * @param winConditionType WinConditionTypes defines win condition.
+     * @param count int param for WinCondition initialization.
+     * @param gameType GameTypes defines game params, such as game field size, count of players, etc.
+     * @param addBot int defines bot player presence:
+     *               0 - don't add bot player
+     *               1 - add bot as the first player
+     *               2 - add bot as the second player
+     */
+    public GameSessionInitInfo(WinConditionTypes winConditionType, int count,
+            GameTypes gameType, int addBot) {
+        this.winConditionType = winConditionType;
+        this.count = count;
+        this.gameType = gameType;
+        this.addBot = addBot;
+    }
+
+    /**
+     * getter for winConditionType field.
+     * @return WicConditionTypes.
+     */
+    public WinConditionTypes getWinConditionType() {
+        return winConditionType;
+    }
+
+    /**
+     * getter for count field.
+     * @return int.
+     */
+    public int getCount() {
+        return count;
+    }
+
+    /**
+     * getter for gameType field.
+     * @return GameTypes.
+     */
+    public GameTypes getGameType() {
+        return gameType;
+    }
+
+
+    /**
+     * getter for addBot field.
+     * @return int.
+     */
+    public int getAddBot() {
+        return addBot;
+    }
+}

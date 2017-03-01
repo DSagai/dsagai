@@ -10,6 +10,7 @@ package ru.job4j.dsagai.exam.server.game.round;
 
 public enum GameTypes {
     //TODO: Configure
+    //TODO: init from XML?
     TicTacThreeOnThreeCellsField(3, 2, 10, TicTacToe.class),
     TicTacFiveOnFiveCellsField(5, 3, 10, TicTacToe.class);
 

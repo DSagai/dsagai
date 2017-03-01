@@ -19,7 +19,7 @@ public class MessagePropertyReader {
     private ResourceBundle resourceBundle;
 
     private MessagePropertyReader() {
-        setLocale(Locale.getDefault());
+        setLocale(Locale.ENGLISH);
     }
 
     public void setLocale(Locale locale) {

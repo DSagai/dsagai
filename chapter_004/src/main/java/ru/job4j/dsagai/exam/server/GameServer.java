@@ -1,6 +1,29 @@
 package ru.job4j.dsagai.exam.server;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import ru.job4j.dsagai.exam.exceptions.UnexpectedMessageType;
+import ru.job4j.dsagai.exam.protocol.Connection;
+import ru.job4j.dsagai.exam.protocol.messages.Message;
+import ru.job4j.dsagai.exam.protocol.messages.MessageType;
+import ru.job4j.dsagai.exam.server.game.GameSession;
+import ru.job4j.dsagai.exam.server.game.GameSessionInfo;
+import ru.job4j.dsagai.exam.server.game.GameSessionInitInfo;
+import ru.job4j.dsagai.exam.server.game.conditions.GamesCountCondition;
+import ru.job4j.dsagai.exam.server.game.roles.Player;
+import ru.job4j.dsagai.exam.server.game.roles.RemotePlayer;
+import ru.job4j.dsagai.exam.server.game.roles.bots.BotFactory;
+import ru.job4j.dsagai.exam.server.game.round.GameRound;
+import ru.job4j.dsagai.exam.util.MessagePropertyReader;
+import ru.job4j.dsagai.exam.util.ServerPropertyReader;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.*;
 
 /**
  * TODO: add comments
@@ -11,9 +34,247 @@ import java.io.Serializable;
  */
 
 public class GameServer {
-    private static final long versionUID = -5205962155846180894L;
+    private static final long VERSION_UID = -5205962155846180894L;
+    private static final Logger log = Logger.getLogger(GameServer.class);
+    private static final int THREADS_LIMIT = 200;
+
+    private final Map<String, GameSession> gameSessions;
+    private final ExecutorCompletionService<String> completionService;
+
+    public GameServer() {
+        this.gameSessions = new ConcurrentSkipListMap<>();
+        this.completionService = new ExecutorCompletionService<String>(new ThreadPoolExecutor(THREADS_LIMIT, THREADS_LIMIT,
+                0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(THREADS_LIMIT)));
+
+    }
+
+    /**
+     * TODO: implement method
+     */
+    public void start() {
+        Thread completionServiceReader = new Thread() {
+            @Override
+            public void run() {
+                while (!interrupted()) {
+                    try {
+                        log.log(Level.INFO, GameServer.this.completionService.take().get());
+                    } catch (InterruptedException e) {
+                        log.log(Level.INFO, e.getMessage());
+                    } catch (ExecutionException e) {
+                        log.log(Level.DEBUG, e.getCause().getStackTrace());
+                    }
+                }
+            }
+        };
+        completionServiceReader.setDaemon(true);
+        completionServiceReader.start();
+
+    }
 
     public static void main(String[] args) {
 
+    }
+
+    /**
+     * class provides management of client connection.
+     * Accepts client requests and sends responses.
+     * If connection brakes by any reason, ConnectionHandler calls for disconnect to
+     * active GameSession.
+     */
+    private class ConnectionHandler implements Callable<String> {
+
+        private final Connection connection;
+        private final Future<String> connectionFuture;
+
+        private boolean isConnected = false;
+        //game session, which is connected to current remote user.
+        private GameSession currentSession;
+        //tells: is current ConnectionHolder owner of the currentSession.
+        private boolean sessionOwner;
+
+        public ConnectionHandler(Connection connection, Future<String> connectionFuture) {
+            this.connection = connection;
+            this.connectionFuture = connectionFuture;
+            this.currentSession = null;
+            this.sessionOwner = false;
+        }
+
+        @Override
+        //the main loop of connection handler
+        public String call() throws Exception {
+            String result = "";
+            handShake();
+            while (this.isConnected && !Thread.currentThread().isInterrupted()) {
+                if (!this.connectionFuture.isDone()) {
+                    Message response = this.connection.getServiceResponse();
+                    switch (response.getType()) {
+                    case MENU_REQUEST:
+                        doMenuRequest();
+                        break;
+                    case ACTIVE_SESSIONS_REQUEST:
+                        doActiveSessionRequest();
+                        break;
+                    case CONNECT_AS_PLAYER:
+                        doConnectAsPlayer((String) response.getData());
+                        break;
+                    case CONNECT_AS_SPECTATOR:
+                        doConnectAsSpectator((String) response.getData());
+                        break;
+                    case CREATE_GAME:
+                        doCreateGame((GameSessionInitInfo) response.getData());
+                        break;
+                    case DISCONNECT_GAME:
+                        doDisconnectGame();
+                        break;
+                    case DISCONNECT_SERVER:
+                        doDisconnectServer();
+                        break;
+                    }
+                    if (this.currentSession != null && !this.currentSession.isActive()) {
+                        if (this.sessionOwner) {
+                            GameServer.this.gameSessions.remove(this.currentSession.getUid());
+                            this.sessionOwner = false;
+                        }
+                        this.currentSession = null;
+                    }
+                } else {
+                    doDisconnectServer();
+                }
+            }
+            return result;
+        }
+
+        /**
+         * method closes clients connection.
+         * @throws IOException
+         */
+        private void doDisconnectServer() throws IOException {
+            doDisconnectGame();
+            this.isConnected = false;
+            this.connection.close();
+        }
+
+        /**
+         * method disconnect client from GameSession, but
+         * server connection remains active.
+         */
+        private void doDisconnectGame() {
+            if (this.currentSession != null) {
+                this.currentSession.removeClient(this.connection.getRemoteSocketAddress());
+            }
+        }
+
+        /**
+         * method creates new GameSession and joins own client connection to it.
+         * @throws Exception
+         */
+        private void doCreateGame(GameSessionInitInfo initInfo) throws Exception {
+            GameSession gameSession = new GameSession(initInfo);
+            Class<? extends GameRound> gameRoundClass = initInfo.getGameType().getClazz();
+            Player player = new RemotePlayer(this.connection);
+            switch (initInfo.getAddBot()) {
+            case 0:
+                gameSession.addPlayer(player);
+                break;
+            case 1:
+                gameSession.addPlayer(player);
+                gameSession.addPlayer(BotFactory.getBot(gameRoundClass));
+                break;
+            case 2:
+                gameSession.addPlayer(BotFactory.getBot(gameRoundClass));
+                gameSession.addPlayer(player);
+            }
+            this.currentSession = gameSession;
+            this.sessionOwner = true;
+            GameServer.this.completionService.submit(gameSession);
+            this.connection.pushMessage(new Message(MessageType.GAME_CONNECTION_SUCCESSFUL));
+            GameServer.this.gameSessions.put(gameSession.getUid(), gameSession);
+
+        }
+
+        /**
+         * method joins client connection to the existing GameSession as Spectator.
+         * if connection was accepted, then then sends to the client message GAME_CONNECTION_SUCCESSFUL,
+         * otherwise sends GAME_CONNECTION_UNSUCCESSFUL
+         * @param uid String.
+         */
+        private void doConnectAsSpectator(String uid) {
+            GameSession session = GameServer.this.gameSessions.get(uid);
+            boolean result = false;
+            if (session != null) {
+                result = session.addSpectator(new RemotePlayer(this.connection));
+            }
+            if (result) {
+                this.currentSession = session;
+                this.connection.pushMessage(new Message(MessageType.GAME_CONNECTION_SUCCESSFUL));
+            } else {
+                this.connection.pushMessage(new Message(MessageType.GAME_CONNECTION_UNSUCCESSFUL));
+            }
+        }
+
+        /**
+         * method joins client connection to the existing GameSession as Player.
+         * if connection was accepted, then then sends to the client message GAME_CONNECTION_SUCCESSFUL,
+         * otherwise sends GAME_CONNECTION_UNSUCCESSFUL
+         * @param uid String.
+         */
+        private void doConnectAsPlayer(String uid) {
+            GameSession session = GameServer.this.gameSessions.get(uid);
+            boolean result = false;
+            if (session != null) {
+                result = session.addPlayer(new RemotePlayer(this.connection));
+            }
+            if (result) {
+                this.currentSession = session;
+                this.connection.pushMessage(new Message(MessageType.GAME_CONNECTION_SUCCESSFUL));
+            } else {
+                this.connection.pushMessage(new Message(MessageType.GAME_CONNECTION_UNSUCCESSFUL));
+            }
+        }
+
+        /**
+         * method sends to the client List of active game sessions.
+         */
+        private void doActiveSessionRequest() {
+            ArrayList<GameSessionInfo> sessions = new ArrayList<>();
+            for (Map.Entry<String, GameSession> sessionEntry : GameServer.this.gameSessions.entrySet()) {
+                if (sessionEntry.getValue().isActive()) {
+                    sessions.add(sessionEntry.getValue().getGameSessionInfo());
+                }
+            }
+            this.connection.pushMessage(new Message(MessageType.ACTIVE_SESSIONS_RESPONSE, sessions));
+        }
+
+
+        private void doMenuRequest() {
+            //TODO: implement method
+        }
+
+        /**
+         * method checks client version.
+         * if it equals to the server VERSION_UID,
+         * then connection accepted,
+         * else connection refused.
+         */
+        private void handShake() throws UnexpectedMessageType {
+            this.connection.pushMessage(new Message(MessageType.VERSION_CHECK_REQUEST));
+            Message response = this.connection.getServiceResponse();
+            if (response.getType() != MessageType.VERSION_RESPONSE){
+                //todo:
+                throw new UnexpectedMessageType(String.format("Expected GAME_TURN_RESPONSE, but received %s",
+                        response.getType().name()));
+            } else {
+                long clientVersion = (long)response.getData();
+                if (clientVersion == GameServer.VERSION_UID) {
+                    this.isConnected = true;
+                    this.connection.pushMessage(new Message(MessageType.CONNECTION_ACCEPTED,
+                            String.format(MessagePropertyReader.getInstance().getString("server.connection.accepted"),
+                                    ServerPropertyReader.getInstance().getProperty("server.name"))));
+                } else {
+                    this.connection.pushMessage(new Message(MessageType.CONNECTION_REFUSED,
+                            MessagePropertyReader.getInstance().getString("server.connection.refused")));
+                }
+            }
+        }
     }
 }

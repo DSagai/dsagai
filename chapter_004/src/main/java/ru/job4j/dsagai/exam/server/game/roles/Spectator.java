@@ -27,9 +27,4 @@ public interface Spectator {
      */
     void showMessage(String message)  throws IOException;
 
-    /**
-     *
-     * @return true if connection is still active, otherwise returns false
-     */
-    boolean isConnected();
 }
