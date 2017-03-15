@@ -1,9 +1,10 @@
 package ru.job4j.dsagai.exam.server.game;
 
+import org.apache.log4j.Level;
+import ru.job4j.dsagai.exam.server.GameServer;
 import ru.job4j.dsagai.exam.server.game.conditions.WinCondition;
 import ru.job4j.dsagai.exam.server.game.roles.Player;
 import ru.job4j.dsagai.exam.server.game.roles.Spectator;
-import ru.job4j.dsagai.exam.server.game.roles.bots.TicTacBot;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 import ru.job4j.dsagai.exam.server.game.round.GameTypes;
 import ru.job4j.dsagai.exam.util.MessagePropertyReader;
@@ -13,13 +14,14 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.rmi.server.UID;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 
 /**
  * GameSession class implements administration of game session (sequence of game rounds)
- * TODO: modify class for modern concept accordance
  * @author dsagai
  * @version 1.00
  * @since 16.02.2017
@@ -30,13 +32,13 @@ public class GameSession implements Callable<String> {
 
     private final WinCondition winCondition;
     private final GameTypes type;
-    private final CopyOnWriteArrayList<Spectator> spectators;
-    private final CopyOnWriteArrayList<Player> players;
+    private final ConcurrentHashMap<SocketAddress,Spectator> spectators;
+    private final ConcurrentHashMap<SocketAddress,Player> players;
     private final String uid;
     private final MessagePropertyReader messagePropertyReader;
 
     private GameRound gameRound;
-    private Status status;
+    private volatile Status status;
 
     /**
      * default constructor
@@ -46,8 +48,8 @@ public class GameSession implements Callable<String> {
     public GameSession(WinCondition winCondition, GameTypes type) {
         this.winCondition = winCondition;
         this.type = type;
-        this.spectators = new CopyOnWriteArrayList<Spectator>();
-        this.players = new CopyOnWriteArrayList<Player>();
+        this.spectators = new ConcurrentHashMap<SocketAddress,Spectator>();
+        this.players = new ConcurrentHashMap<SocketAddress,Player>();
         this.status = Status.New;
         this.uid = (new UID()).toString();
         this.messagePropertyReader = MessagePropertyReader.getInstance();
@@ -87,64 +89,69 @@ public class GameSession implements Callable<String> {
         return this.type.getSpectatorsCount() - this.spectators.size();
     }
 
-    /**
-     * Adds new Player
-     * @param player Player.
-     * @return true if player was successfully added, otherwise returns false.
-     */
-    public synchronized boolean addPlayer(Player player) {
-        boolean result = false;
-        if (this.status == Status.New && getAvailablePlayerConnectionsCount() > 0) {
-            if (addSpectator(player)) {
-                this.players.add(player);
-                result = true;
-            }
-        }
-        return result;
-    }
-
-    public synchronized boolean addSpectaror(SocketAddress address, Spectator spectator) {
-        // TODO: implement method
-        return false;
-    }
-
-    public synchronized boolean addPlayer(SocketAddress address, Player player) {
-        //TODO: implement method
-        return false;
-    }
-
-    public void removeClient(SocketAddress address) {
-        //TODO: implement method
-    }
 
     /**
-     * Adds new Spectator
+     * method adds new spectator to the session.
+     * @param address SocketAddress.
      * @param spectator Spectator.
-     * @return true if spectator was successfully added, otherwise returns false.
+     * @return true if spectator was added, or false otherwise.
      */
-    public synchronized boolean addSpectator(Spectator spectator) {
+    public synchronized boolean addSpectator(SocketAddress address, Spectator spectator) {
         boolean result = false;
         if (this.status != Status.Closed && getAvailableSpectatorConnectionsCount() > 0) {
-            this.spectators.add(spectator);
+            this.spectators.put(address, spectator);
             result = true;
         }
         return result;
     }
 
     /**
-     * TODO: add javadoc
-     * @param player
+     * method adds new player to the session.
+     * @param address SocketAddress.
+     * @param player Player.
+     * @return true if player was added, or false otherwise.
      */
-    public void removePlayer(Player player) {
-        //TODO: add method implementation
+    public synchronized boolean addPlayer(SocketAddress address, Player player) {
+        boolean result = false;
+        if (this.status == Status.New && getAvailablePlayerConnectionsCount() > 0) {
+            if (addSpectator(address, player)) {
+                this.players.put(address, player);
+                result = true;
+            }
+        }
+        return result;
     }
 
     /**
-     * TODO: add javadoc
-     * @param spectator
+     * removes client from the game session.
+     * @param address
      */
-    public void removeSpectator(Spectator spectator) {
-        //TODO: add method implementation
+    public void removeClient(SocketAddress address) {
+        removeSpectator(address);
+        removePlayer(address);
+    }
+
+
+    /**
+     * Removes player from game session.
+     * if session has already begun, then session closes.
+     * @param address
+     */
+    private void removePlayer(SocketAddress address) {
+
+        this.players.remove(address);
+        if (this.status == Status.Started){
+            this.status = Status.Closed;
+            close(this.messagePropertyReader.getString("game.end.lost.player"));
+        }
+    }
+
+    /**
+     * removes spectator from game session.
+     * @param address SocketAddress.
+     */
+    private void removeSpectator(SocketAddress address) {
+        this.spectators.remove(address);
     }
 
 
@@ -172,10 +179,8 @@ public class GameSession implements Callable<String> {
      */
     private void waitForPlayersLoop() {
         while (getAvailablePlayerConnectionsCount() != 0){
-            checkSpectatorConnections();
-            checkPlayerConnections();
             if (this.players.isEmpty() && this.spectators.isEmpty()){
-                finishGameSession(this.messagePropertyReader.getString("game.end.no.connections"));
+                close(this.messagePropertyReader.getString("game.end.no.connections"));
             }
         }
     }
@@ -191,9 +196,12 @@ public class GameSession implements Callable<String> {
         int i = 0;
         this.gameRound = getNewRound();
         sendBroadcastMessage(this.messagePropertyReader.getString("game.round.started"));
+        refreshField();
+        Player[] playersArray = null;
+        playersArray = this.players.values().toArray(playersArray);
         while (this.status != Status.Closed) {
             try {
-                this.players.get(i).makeTurn(this.gameRound);
+                playersArray[i].makeTurn(this.gameRound);
                 refreshField();
                 if (this.gameRound.isGameOver()) {
                     this.winCondition.addRoundResult(this.gameRound.getWinnerId());
@@ -206,7 +214,7 @@ public class GameSession implements Callable<String> {
 
 
                     if (this.winCondition.isVictory()) {
-                        finishGameSession(String.format(this.messagePropertyReader.getString("game.end.win"), this.winCondition.getWinnerId()));
+                        close(String.format(this.messagePropertyReader.getString("game.end.win"), this.winCondition.getWinnerId()));
                     } else {
                         i = 0;
                         this.gameRound = getNewRound();
@@ -219,7 +227,7 @@ public class GameSession implements Callable<String> {
                     }
                 }
             } catch (Exception e) {
-                finishGameSession(this.messagePropertyReader.getString("game.end.unexpected.situation"));
+                close(this.messagePropertyReader.getString("game.end.unexpected.situation"));
                 throw e;
             }
         }
@@ -229,13 +237,16 @@ public class GameSession implements Callable<String> {
      * sends actual game field to all spectators.
      */
     private void refreshField() throws IOException {
-        for (Spectator spectator : this.spectators){
-            spectator.refreshField(this.gameRound);
+        for (Map.Entry<SocketAddress,Spectator> spectator : this.spectators.entrySet()){
+            spectator.getValue().refreshField(this.gameRound);
         }
     }
 
 
     @Override
+    /**
+     * game session entry point.
+     */
     public String call() throws Exception {
         Date startTime = new Date();
         waitForPlayersLoop();
@@ -244,45 +255,16 @@ public class GameSession implements Callable<String> {
         return String.format(this.messagePropertyReader.getString("log.session"), this.uid, startTime, endTime);
     }
 
-    /**
-     * checks are players still connected?
-     * if not then removes disconnected.
-     * if some one was disconnected after session  was started, then session closes.
-     */
-    //TODO: rewrite method
-    private void checkPlayerConnections() {
-//        for (int i = this.players.size(); i >= 0; i--) {
-//            if (!this.players.get(i).isConnected()){
-//                this.players.remove(i);
-//                if (this.status == Status.Started){
-//                    finishGameSession(this.messagePropertyReader.getString("game.end.lost.player"));
-//                    break;
-//                }
-//            }
-//        }
-    }
 
-
-    /**
-     * checks are spectators still connected?
-     * if not then removes disconnected.
-     */
-    //TODO: rewrite method
-    private void checkSpectatorConnections() {
-//        for (int i = this.spectators.size() - 1; i >= 0; i--) {
-//            if (!this.spectators.get(i).isConnected()) {
-//                this.spectators.remove(i);
-//            }
-//        }
-    }
 
 
     /**
      * Closes current session.
      * @param result String result of the GameSession or the reason why Session was finished.
      */
-    private void finishGameSession(String result) {
+    public void close(String result) {
         sendBroadcastMessage(String.format(this.messagePropertyReader.getString("session.end"), result));
+        sendBroadcastDisconnectMessage();
         this.players.clear();
         this.spectators.clear();
         this.status = Status.Closed;
@@ -293,11 +275,21 @@ public class GameSession implements Callable<String> {
      * @param message String.
      */
     private void sendBroadcastMessage(String message) {
-        for (Spectator spectator : this.spectators){
+        for (Map.Entry<SocketAddress,Spectator> spectator : this.spectators.entrySet()){
             try {
-                spectator.showMessage(message);
+                spectator.getValue().showMessage(message);
             } catch (Exception e) {
-                //TODO: log error
+                GameServer.log.log(Level.INFO, e.getCause().getMessage());
+            }
+        }
+    }
+
+    private void sendBroadcastDisconnectMessage() {
+        for (Map.Entry<SocketAddress,Spectator> spectator : this.spectators.entrySet()){
+            try {
+                spectator.getValue().disconnectMessage();
+            } catch (Exception e) {
+                GameServer.log.log(Level.INFO, e.getCause().getMessage());
             }
         }
     }
@@ -317,6 +309,7 @@ public class GameSession implements Callable<String> {
     public GameSessionInfo getGameSessionInfo() {
         return new GameSessionInfo(this);
     }
+
 
 
     /**

@@ -19,7 +19,7 @@ public class ServerPropertyReaderTest {
     public void getProperty() throws Exception {
         ServerPropertyReader propertyReader = ServerPropertyReader.getInstance();
 
-        assertThat(propertyReader.getIntValue("server.port"), is(24000));
+        assertThat(propertyReader.getIntValue("server.port"), is(6666));
     }
 
 }

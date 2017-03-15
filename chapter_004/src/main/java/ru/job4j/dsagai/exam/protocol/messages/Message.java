@@ -41,4 +41,25 @@ public class Message implements Serializable {
     public Serializable getData() {
         return data;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Message message = (Message) o;
+
+        if (type != message.type)
+            return false;
+        return data != null ? data.equals(message.data) : message.data == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        return result;
+    }
 }

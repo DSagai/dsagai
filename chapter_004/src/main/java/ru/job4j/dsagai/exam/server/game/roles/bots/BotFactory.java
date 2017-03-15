@@ -4,6 +4,8 @@ import ru.job4j.dsagai.exam.server.game.roles.Player;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 import ru.job4j.dsagai.exam.server.game.round.TicTacToe;
 
+import java.net.SocketAddress;
+
 /**
  * Utility class. Returns appropriate Bot implementation
  * in dependency of game type
@@ -14,6 +16,15 @@ import ru.job4j.dsagai.exam.server.game.round.TicTacToe;
  */
 
 public class BotFactory {
+
+    /**
+     *
+     * @return
+     */
+    public static SocketAddress getFakeAddress() {
+        //TODO: implement method.
+        return null;
+    }
 
     /**
      * returns appropriate Bot implementation

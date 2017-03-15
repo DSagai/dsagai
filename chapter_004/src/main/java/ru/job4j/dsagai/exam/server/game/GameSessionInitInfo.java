@@ -25,7 +25,6 @@ public final class GameSessionInitInfo implements Serializable {
     /**
      * 0 - don't add bot player
      * 1 - add bot as the first player
-
      * 2 - add bot as the second player
      */
     private final int addBot;
@@ -79,5 +78,32 @@ public final class GameSessionInitInfo implements Serializable {
      */
     public int getAddBot() {
         return addBot;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        GameSessionInitInfo that = (GameSessionInitInfo) o;
+
+        if (count != that.count)
+            return false;
+        if (addBot != that.addBot)
+            return false;
+        if (winConditionType != that.winConditionType)
+            return false;
+        return gameType == that.gameType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = winConditionType.hashCode();
+        result = 31 * result + count;
+        result = 31 * result + gameType.hashCode();
+        result = 31 * result + addBot;
+        return result;
     }
 }

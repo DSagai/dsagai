@@ -27,4 +27,10 @@ public interface Spectator {
      */
     void showMessage(String message)  throws IOException;
 
+    /**
+     * informs client that he'll be disconnected.
+     * @throws IOException
+     */
+    void disconnectMessage() throws IOException;
+
 }

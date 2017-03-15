@@ -11,26 +11,36 @@ import java.io.Serializable;
  */
 
 public enum MessageType {
-    //server logic
-    VERSION_CHECK_REQUEST,
-    VERSION_RESPONSE,
-    CONNECTION_ACCEPTED,
-    CONNECTION_REFUSED,
-    MENU_REQUEST,
-    MENU,
-    ACTIVE_SESSIONS_REQUEST,
-    ACTIVE_SESSIONS_RESPONSE,
-    CONNECT_AS_SPECTATOR,
-    CONNECT_AS_PLAYER,
-    CREATE_GAME,
-    DISCONNECT_GAME,
-    DISCONNECT_SERVER,
-    GAME_CONNECTION_SUCCESSFUL,
-    GAME_CONNECTION_UNSUCCESSFUL,
-    //game logic
-    GAME_TURN_REQUEST,
-    GAME_TURN_RESPONSE,
-    FIELD_REFRESH_REQUEST,
-    TEXT_MESSAGE;
+    //requests
+    VERSION_CHECK_REQUEST(true),
+    ACTIVE_SESSIONS_REQUEST(true),
+    CONNECT_AS_SPECTATOR(true),
+    CONNECT_AS_PLAYER(true),
+    CREATE_GAME(true),
+    DISCONNECT_GAME(true),
+    DISCONNECT_SERVER(true),
+    GAME_TURN_REQUEST(true),
+    FIELD_REFRESH_REQUEST(true),
+    TEXT_MESSAGE(true),
+    //responses
+    ACTIVE_SESSIONS_RESPONSE(false),
+    CONNECTION_ACCEPTED(false),
+    CONNECTION_REFUSED(false),
+    VERSION_RESPONSE(false),
+    GAME_TURN_RESPONSE(false);
 
+    //defines does message belong to request type
+    private final boolean request;
+
+    /**
+     * getter for request field.
+     * @return true if message is request. Returns false if message is response.
+     */
+    public boolean isRequest() {
+        return request;
+    }
+
+    MessageType(boolean request) {
+        this.request = request;
+    }
 }

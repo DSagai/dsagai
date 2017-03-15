@@ -28,9 +28,8 @@ public class Connection implements Closeable, Callable<String> {
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
 
-    private final BlockingQueue<Message> gameResponse;
-    private final BlockingQueue<Message> serviceResponse;
-    private final BlockingQueue<Message> outgoingMessages;
+    private final BlockingQueue<Message> requests;
+    private final BlockingQueue<Message> responses;
 
     private final String uid;
     private final Date started;
@@ -47,11 +46,10 @@ public class Connection implements Closeable, Callable<String> {
      */
     public Connection(Socket socket)  throws IOException {
         this.socket = socket;
-        this.in = new ObjectInputStream(socket.getInputStream());
-        this.out = new ObjectOutputStream(socket.getOutputStream());
-        this.gameResponse = new ArrayBlockingQueue<Message>(MESSAGE_QUEUE_CAPACITY);
-        this.serviceResponse = new ArrayBlockingQueue<Message>(MESSAGE_QUEUE_CAPACITY);
-        this.outgoingMessages = new ArrayBlockingQueue<Message>(MESSAGE_QUEUE_CAPACITY);
+        this.out = new ObjectOutputStream(this.socket.getOutputStream());
+        this.in = new ObjectInputStream(this.socket.getInputStream());
+        this.requests = new ArrayBlockingQueue<Message>(MESSAGE_QUEUE_CAPACITY);
+        this.responses = new ArrayBlockingQueue<Message>(MESSAGE_QUEUE_CAPACITY);
         this.uid = (new UID()).toString();
         this.started = new Date();
     }
@@ -63,11 +61,11 @@ public class Connection implements Closeable, Callable<String> {
      * closes connection
      */
     public void close() throws IOException {
+        this.connected.set(false);
         this.in.close();
         this.out.close();
         this.socket.close();
         this.ended = new Date();
-        this.connected.set(false);
     }
 
     @Override
@@ -81,7 +79,6 @@ public class Connection implements Closeable, Callable<String> {
 
         while (!Thread.currentThread().isInterrupted() && this.connected.get()){
             receive();
-            send();
         }
 
         close();
@@ -90,14 +87,22 @@ public class Connection implements Closeable, Callable<String> {
     }
 
     /**
-     * sends next message from the queue.
-     * @throws IOException
+     * Method sends message to client.
+     * @param outgoing Message.
+     * @return true if message was sent, otherwise returns false.
      */
-    private void send() throws IOException, InterruptedException {
-        Message outgoing = this.outgoingMessages.poll();
-        if (outgoing != null) {
-            this.out.writeObject(outgoing);
+    public boolean send(Message outgoing) throws IOException {
+        boolean result = false;
+        try {
+            if (outgoing != null) {
+                this.out.writeObject(outgoing);
+                result = true;
+            }
+        } catch (Exception e) {
+            close();
         }
+
+        return result;
     }
 
     /**
@@ -107,12 +112,12 @@ public class Connection implements Closeable, Callable<String> {
      * @throws ClassNotFoundException
      */
     private void receive() throws IOException, ClassNotFoundException {
-        Message response = (Message)this.in.readObject();
-        switch (response.getType()){
-            case GAME_TURN_RESPONSE: this.gameResponse.offer(response);
-            break;
-            default: this.serviceResponse.offer(response);
-            break;
+        Message message = (Message)this.in.readObject();
+
+        if (message.getType().isRequest()) {
+            this.requests.offer(message);
+        } else {
+            this.responses.offer(message);
         }
     }
 
@@ -124,29 +129,22 @@ public class Connection implements Closeable, Callable<String> {
         return uid;
     }
 
-    /**
-     * puts new message into
-     * outgoing queue
-     * @param message
-     */
-    public void pushMessage(Message message) {
-        this.outgoingMessages.offer(message);
-    }
+
 
     /**
      * returns game response
      * @return next message from the queue
      */
-    public Message getGameResponse() {
-        return this.gameResponse.poll();
+    public Message getRequests() throws InterruptedException {
+        return this.requests.take();
     }
 
     /**
      * returns service message
      * @return next message from the queue
      */
-    public Message getServiceResponse() {
-        return this.serviceResponse.poll();
+    public Message getResponses() throws InterruptedException {
+        return this.responses.take();
     }
 
     /**

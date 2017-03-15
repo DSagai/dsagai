@@ -49,4 +49,13 @@ public final class GameSessionInfo implements Serializable {
     public String getUid() {
         return uid;
     }
+
+    @Override
+    public String toString() {
+        return "GameSessionInfo{" +
+                "uid='" + uid + '\'' +
+                ", playerSlotsAvailable=" + playerSlotsAvailable +
+                ", spectatorSlotsAvailable=" + spectatorSlotsAvailable +
+                '}';
+    }
 }

@@ -14,10 +14,17 @@ import java.io.IOException;
  */
 
 public interface Player extends Spectator {
+
+    /**
+     * method appoints player's id for this session.
+     * @param id
+     */
+    void setId(int id);
+
     /**
      * make next turn.
      * @param game GameRound current game round.
      */
-    void makeTurn(GameRound game) throws IOException, UnexpectedMessageType, ClassNotFoundException;
+    void makeTurn(GameRound game) throws IOException, UnexpectedMessageType, ClassNotFoundException, InterruptedException;
 
 }
