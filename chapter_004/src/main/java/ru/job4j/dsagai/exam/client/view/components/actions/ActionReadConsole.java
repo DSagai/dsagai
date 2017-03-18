@@ -3,10 +3,11 @@ package ru.job4j.dsagai.exam.client.view.components.actions;
 import ru.job4j.dsagai.exam.client.view.ConsoleView;
 
 /**
- * TODO: add comments
+ * Action, which reads text from the console
+ * to the TextConsumer.
  *
  * @author dsagai
- * @version TODO: set version
+ * @version 1.00
  * @since 15.03.2017
  */
 public class ActionReadConsole implements Action {
@@ -19,6 +20,9 @@ public class ActionReadConsole implements Action {
     }
 
     @Override
+    /**
+     * Taking an action.
+     */
     public void doAction() throws InterruptedException {
         String response = this.view.takeConsoleResponse();
         this.consumer.feed(response);

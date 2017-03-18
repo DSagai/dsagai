@@ -34,10 +34,9 @@ public class MenuMode extends Screen {
             int response = Integer.parseInt(this.getView().takeConsoleResponse()) - 1;
             Screen nextScreen = MenuModeSelection.values()[response]
                     .getInstance(this.getController(), this.getView());
-            nextScreen.start();
             getView().setScreen(nextScreen);
         } catch (InterruptedException e) {
-            this.getView().activateMenu();
+            //this.getView().activateMenu();
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             refresh();
         } catch (Exception e) {

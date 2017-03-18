@@ -41,7 +41,7 @@ public class TicTacBot implements Player {
      * copies game field into own field.
      */
     public void refreshField(GameRound game) {
-        this.gameField = game.getField();
+        this.gameField = game.getField().getArrayRepresentation();
     }
 
     @Override

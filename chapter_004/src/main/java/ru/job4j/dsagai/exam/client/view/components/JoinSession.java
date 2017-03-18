@@ -31,7 +31,6 @@ public class JoinSession extends Screen {
             boolean result = getController().connectGameSession(sessions.get(response).getUid(), this.player);
             if (result) {
                 Screen gameMode = new GameMode(getController(), getView());
-                gameMode.start();
                 getView().setScreen(gameMode);
             } else {
                 System.out.println("Connection was unsuccessful. Try again.");
@@ -57,9 +56,7 @@ public class JoinSession extends Screen {
      * which shows fresh info about active sessions.
      */
     public void refresh() {
-        interrupt();
-        Screen joinSession = new JoinSession(getController(), getView(), player);
-        joinSession.start();
+        Screen joinSession = new JoinSession(getController(), getView(), this.player);
         getView().setScreen(joinSession);
     }
 }

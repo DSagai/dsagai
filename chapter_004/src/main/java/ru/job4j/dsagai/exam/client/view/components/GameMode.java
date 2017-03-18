@@ -66,7 +66,11 @@ public class GameMode extends Screen {
             String[] coordinates = text.split(",");
             int x = Integer.parseInt(coordinates[0]);
             int y = Integer.parseInt(coordinates[1]);
-            return new GameCell(x, y);
+            if (x < 1 || x > GameMode.this.gameField.length
+                    || y < 1 || y > GameMode.this.gameField.length) {
+                throw new IndexOutOfBoundsException();
+            }
+            return new GameCell(x - 1, y - 1);
         }
     };
 
@@ -88,6 +92,7 @@ public class GameMode extends Screen {
      * Process queue of actions until thread was interrupted.
      */
     public void run() {
+        super.showMessage("Waiting for the game start.");
         try {
             while (!isInterrupted()) {
                 Action action = this.actions.poll();
@@ -113,7 +118,7 @@ public class GameMode extends Screen {
      * adds "turn request" action to the actions queue.
      */
     public void turnRequest() {
-        showText(String.format("Make you turn! Enter text in format \"X,Y\",%n%s",
+        showMessage(String.format("Make you turn! Enter text in format \"X,Y\",%n%s",
                 "where X is horizontal coordinate, Y is vertical coordinate."));
         this.actions.offer(new ActionReadConsole(this.textConsumer, getView()));
     }
@@ -122,7 +127,8 @@ public class GameMode extends Screen {
      * adds "show text" action to the actions queue
      * @param text
      */
-    public void showText(String text) {
+    @Override
+    public void showMessage(String text) {
         this.actions.offer(new ActionShowText(text));
     }
 
@@ -139,8 +145,10 @@ public class GameMode extends Screen {
      * @param field int[][].
      */
     public void updateField(int[][] field) {
+        showMessage(String.format("GAME FIELD UPDATES...%n"));
         setGameField(field);
         refresh();
+        showMessage(String.format("%n"));
     }
 
     /**

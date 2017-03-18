@@ -27,7 +27,7 @@ public class TicTacToeTest {
 
     @Test
     public void gameField()throws Exception {
-        int [][] field = this.gameRound.getField();
+        int [][] field = this.gameRound.getField().getArrayRepresentation();
         assertThat(3, is(field.length));
         assertThat(3, is(field[0].length));
     }
@@ -45,7 +45,7 @@ public class TicTacToeTest {
         int x = 1;
         int y = 2;
         assertThat(this.gameRound.turn(this.player, x, y), is(true));
-        assertThat(this.gameRound.getField()[x][y], is(this.player));
+        assertThat(this.gameRound.getField().getValue(x, y), is(this.player));
     }
 
     @Test

@@ -8,12 +8,14 @@ import ru.job4j.dsagai.exam.protocol.Connection;
 import ru.job4j.dsagai.exam.protocol.messages.Message;
 import ru.job4j.dsagai.exam.protocol.messages.MessageType;
 import ru.job4j.dsagai.exam.server.game.GameSessionInfo;
-import ru.job4j.dsagai.exam.server.game.GameSessionInitInfo;
+import ru.job4j.dsagai.exam.server.game.InitGameSessionInfo;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
+import ru.job4j.dsagai.exam.server.game.round.GameField;
 
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.FutureTask;
@@ -29,6 +31,7 @@ import java.util.concurrent.FutureTask;
 public class Controller extends Thread {
     private static final Logger log = Logger.getLogger(Controller.class);
     private static long VERSION_UID = -5205962155846180894L;
+
 
     private final View view;
     private Connection connection;
@@ -52,7 +55,7 @@ public class Controller extends Thread {
                     switch (incoming.getType()){
                         case GAME_TURN_REQUEST: this.view.turnRequest();
                         break;
-                        case FIELD_REFRESH_REQUEST: this.view.updateField((int[][])incoming.getData());
+                        case FIELD_REFRESH_REQUEST: this.view.updateField((GameField)incoming.getData());
                         break;
                         case DISCONNECT_GAME: this.view.disconnectSession();
                         break;
@@ -71,16 +74,19 @@ public class Controller extends Thread {
      * @param address Sting remote server address.
      * @param port int server port.
      */
-    public void connectServer(String address, int port) {
-
-        try(Socket socket = new Socket(address, port);) {
+    public boolean connectServer(String address, int port) {
+        boolean result = false;
+        Socket socket = null;
+        try {
+            socket = new Socket(address, port);
             this.connection = new Connection(socket);
             new Thread(new FutureTask<String>(this.connection)).start();
             clientHandHake();
+            result = true;
         } catch (IOException e) {
             log.log(Level.ERROR, String.format("Could't connect to server %s:%d", address, port));
         }
-
+        return result;
     }
 
     /**
@@ -125,10 +131,10 @@ public class Controller extends Thread {
 
     /**
      * method creates new game session.
-     * @param initInfo GameSessionInitInfo.
+     * @param initInfo InitGameSessionInfo.
      * @return true if game session was successfully created and player was connected.
      */
-    public boolean createSession(GameSessionInitInfo initInfo) {
+    public boolean createSession(InitGameSessionInfo initInfo) {
         boolean result = false;
         if (this.connected) {
             try {
@@ -237,10 +243,13 @@ public class Controller extends Thread {
     }
 
     /**
-     * TODO add comments
+     * Closing connection with server
+     * and finishing thread.
      */
     public void close() {
         interrupt();
         disconnectServer();
     }
+
+
 }

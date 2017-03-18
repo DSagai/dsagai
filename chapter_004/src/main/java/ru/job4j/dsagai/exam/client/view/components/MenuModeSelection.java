@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 public enum  MenuModeSelection {
     JoinPlayer("Join existing session as Player", JoinSession.class, true),
     JoinSpectator("Join existing session as Spectator", JoinSession.class, false),
-    CreateGame("Start own game session", GameCreateMode.class, true);
+    CreateGame("Start own game session", CreateGameMode.class, true);
 
     //text shown to user
     private final String textDescription;

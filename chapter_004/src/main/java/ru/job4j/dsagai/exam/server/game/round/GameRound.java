@@ -13,7 +13,7 @@ public interface GameRound {
      * returns actual game field.
      * @return int[][]
      */
-    int[][] getField();
+    GameField getField();
 
     /**
      *

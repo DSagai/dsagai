@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.job4j.dsagai.exam.protocol.messages.Message;
 import ru.job4j.dsagai.exam.protocol.messages.MessageType;
-import ru.job4j.dsagai.exam.server.game.GameSessionInitInfo;
+import ru.job4j.dsagai.exam.server.game.InitGameSessionInfo;
 import ru.job4j.dsagai.exam.server.game.conditions.WinConditionTypes;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
 import ru.job4j.dsagai.exam.server.game.round.GameTypes;
@@ -43,7 +43,7 @@ public class ConnectionTest {
         Socket socket = mock(Socket.class);
         ByteArrayOutputStream inputInit = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(inputInit);
-        this.requestMessage = new Message(MessageType.CREATE_GAME, new GameSessionInitInfo(WinConditionTypes.GAMES_COUNT_CONDITION,
+        this.requestMessage = new Message(MessageType.CREATE_GAME, new InitGameSessionInfo(WinConditionTypes.GAMES_COUNT_CONDITION,
                 3, GameTypes.TicTacThreeOnThreeCellsField, 0));
         this.responseMessage = new Message(MessageType.GAME_TURN_RESPONSE, new GameCell(1, 1));
 

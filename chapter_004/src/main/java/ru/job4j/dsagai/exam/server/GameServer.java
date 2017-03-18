@@ -8,7 +8,7 @@ import ru.job4j.dsagai.exam.protocol.messages.Message;
 import ru.job4j.dsagai.exam.protocol.messages.MessageType;
 import ru.job4j.dsagai.exam.server.game.GameSession;
 import ru.job4j.dsagai.exam.server.game.GameSessionInfo;
-import ru.job4j.dsagai.exam.server.game.GameSessionInitInfo;
+import ru.job4j.dsagai.exam.server.game.InitGameSessionInfo;
 
 import ru.job4j.dsagai.exam.server.game.roles.Player;
 import ru.job4j.dsagai.exam.server.game.roles.RemotePlayer;
@@ -152,7 +152,7 @@ public class GameServer {
                             doConnectAsSpectator((String) response.getData());
                             break;
                         case CREATE_GAME:
-                            doCreateGame((GameSessionInitInfo) response.getData());
+                            doCreateGame((InitGameSessionInfo) response.getData());
                             break;
                         case DISCONNECT_GAME:
                             doDisconnectGame();
@@ -199,7 +199,7 @@ public class GameServer {
          * method creates new GameSession and joins own client connection to it.
          * @throws Exception
          */
-        private void doCreateGame(GameSessionInitInfo initInfo) throws Exception {
+        private void doCreateGame(InitGameSessionInfo initInfo) throws Exception {
             GameSession gameSession = new GameSession(initInfo);
             Class<? extends GameRound> gameRoundClass = initInfo.getGameType().getClazz();
             Player player = new RemotePlayer(this.connection);

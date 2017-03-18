@@ -1,6 +1,7 @@
 package ru.job4j.dsagai.exam.protocol;
 
 import ru.job4j.dsagai.exam.protocol.messages.Message;
+import ru.job4j.dsagai.exam.protocol.messages.MessageType;
 import ru.job4j.dsagai.exam.util.MessagePropertyReader;
 
 import java.io.*;
@@ -95,6 +96,9 @@ public class Connection implements Closeable, Callable<String> {
         boolean result = false;
         try {
             if (outgoing != null) {
+                if (outgoing.getType() == MessageType.FIELD_REFRESH_REQUEST) {
+                    System.out.println(outgoing.getData());
+                }
                 this.out.writeObject(outgoing);
                 result = true;
             }

@@ -6,9 +6,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.job4j.dsagai.exam.client.Controller;
 import ru.job4j.dsagai.exam.client.view.ConsoleView;
+import ru.job4j.dsagai.exam.server.game.round.GameCell;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * GameMode tests
@@ -23,6 +33,10 @@ public class GameModeTest {
 
     @Mock
     private ConsoleView view;
+    private ByteArrayOutputStream out;
+    private int[][] field = {{0, 0, 3},
+            {1, 0, 2},
+            {0, 1, 0}};
 
     private GameMode gameMode;
 
@@ -30,14 +44,14 @@ public class GameModeTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         this.gameMode = new GameMode(this.controller, this.view);
+        this.out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(this.out));
     }
 
     @Test
     public void testOfStringRepresentationOfGameField() {
-        int[][] field = {{0, 0, 3},
-                         {1, 0, 2},
-                         {0, 1, 0}};
-        this.gameMode.setGameField(field);
+
+        this.gameMode.setGameField(this.field);
 
         String expectedOutput = String.format("%s%s%s%s%s%s%s%s%s%s%s",
                 " | 1 | 2 | 3 |",
@@ -52,5 +66,46 @@ public class GameModeTest {
                 String.format("%n3|   | X |   |"),
                 String.format("%n_|___|___|___|"));
         assertThat(this.gameMode.getTextRepresentation(), is(expectedOutput));
+    }
+
+    @Test
+    /**
+     * constructs fake actions queue. Then checks, that every action
+     * was properly processed.
+     */
+    public void checkActionsQueue() throws Exception {
+        this.gameMode.start();
+        when(this.view.takeConsoleResponse()).thenReturn("34dd").thenReturn("1,23").thenReturn("1,2");
+
+        this.gameMode.showMessage("Message1");
+        this.gameMode.updateField(this.field);
+        this.gameMode.showMessage("Message2");
+        this.gameMode.turnRequest();
+
+        Thread.currentThread().sleep(1000);
+        this.gameMode.disconnectSession();
+        this.gameMode.join();
+
+        assertThat(this.out.toString().contains("Message1"), is(true));
+        assertThat(this.out.toString().contains("Message2"), is(true));
+        assertThat(this.out.toString().contains("GAME FIELD UPDATES..."), is(true));
+
+        Pattern pattern = Pattern.compile("Wrong format");
+        Matcher matcher = pattern.matcher(out.toString());
+        int count = 0;
+        while (matcher.find()){
+            count++;
+        }
+        assertThat(count, is(2));
+
+        verify(this.controller,times(1)).sendGameTurn(new GameCell(0, 1));
+    }
+
+    @Test
+    public void whenDisconnectThenMenuMode() throws Exception {
+        this.gameMode.start();
+        this.gameMode.disconnectSession();
+        this.gameMode.join();
+        verify(this.view,times(1)).activateMenu();
     }
 }

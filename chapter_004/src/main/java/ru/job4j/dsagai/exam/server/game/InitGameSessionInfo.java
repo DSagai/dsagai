@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 28.02.2017
  */
 
-public final class GameSessionInitInfo implements Serializable {
+public final class InitGameSessionInfo implements Serializable {
     //defines win condition.
     private final WinConditionTypes winConditionType;
     //param for WinCondition initialization.
@@ -39,8 +39,8 @@ public final class GameSessionInitInfo implements Serializable {
      *               1 - add bot as the first player
      *               2 - add bot as the second player
      */
-    public GameSessionInitInfo(WinConditionTypes winConditionType, int count,
-            GameTypes gameType, int addBot) {
+    public InitGameSessionInfo(WinConditionTypes winConditionType, int count,
+                               GameTypes gameType, int addBot) {
         this.winConditionType = winConditionType;
         this.count = count;
         this.gameType = gameType;
@@ -87,7 +87,7 @@ public final class GameSessionInitInfo implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        GameSessionInitInfo that = (GameSessionInitInfo) o;
+        InitGameSessionInfo that = (InitGameSessionInfo) o;
 
         if (count != that.count)
             return false;

@@ -5,6 +5,7 @@ import ru.job4j.dsagai.exam.protocol.Connection;
 import ru.job4j.dsagai.exam.protocol.messages.Message;
 import ru.job4j.dsagai.exam.protocol.messages.MessageType;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
+import ru.job4j.dsagai.exam.server.game.round.GameField;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 import ru.job4j.dsagai.exam.util.MessagePropertyReader;
 

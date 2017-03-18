@@ -12,17 +12,19 @@ import java.util.Arrays;
  */
 
 public class TicTacToe implements GameRound {
-    private final int[][] field;
+    private final GameField gameField;
     private boolean gameOver;
     private int cellsClosed;
     private int winnerId;
+    private GameCell lastTurn;
 
     /**
      * default constructor
      * @param fieldSize int defines edge of the field.
      */
     public TicTacToe(int fieldSize) {
-        this.field = new int[fieldSize][fieldSize];
+        //this.field = new int[fieldSize][fieldSize];
+        this.gameField = new GameField(fieldSize);
         this.gameOver = false;
         this.cellsClosed = 0;
         this.winnerId = 0;
@@ -33,8 +35,8 @@ public class TicTacToe implements GameRound {
      * @return int[][]
      */
     @Override
-    public int[][] getField() {
-        return Arrays.copyOf(this.field, this.field.length);
+    public GameField getField(){
+        return this.gameField;
     }
 
 
@@ -56,16 +58,11 @@ public class TicTacToe implements GameRound {
      */
     @Override
     public boolean turn(int player, int x, int y) {
-        boolean result = false;
-        if (x >= 0 && y >= 0
-                && x < this.field.length && y < this.field.length
-                && this.field[x][y] == 0) {
-            result = true;
-            this.field[x][y] = player;
+        boolean result = this.gameField.updateCell(player, x, y);
+        if (result) {
             this.cellsClosed++;
             checkGameCondition(x, y);
         }
-
         return result;
     }
 
@@ -96,8 +93,8 @@ public class TicTacToe implements GameRound {
      * @param y
      */
     private void checkGameCondition(int x, int y) {
-        int player = this.field[x][y];
-        if (this.cellsClosed == this.field.length * this.field.length) {
+        int player = this.gameField.getValue(x, y);
+        if (this.cellsClosed == this.gameField.length() * this.gameField.length()) {
             this.gameOver = true;
         }else if (horizontalMatches(player, y) || verticalMatches(player, x)
                 || diagonalMatches(player, true)
@@ -115,8 +112,8 @@ public class TicTacToe implements GameRound {
      */
     private boolean horizontalMatches(int player, int y) {
         boolean result = true;
-        for (int x = 0; x < this.field.length; x++){
-            if (this.field[x][y] != player) {
+        for (int x = 0; x < this.gameField.length(); x++){
+            if (this.gameField.getValue(x, y) != player) {
                 result = false;
                 break;
             }
@@ -132,8 +129,8 @@ public class TicTacToe implements GameRound {
      */
     private boolean verticalMatches(int player, int x) {
         boolean result = true;
-        for (int y = 0; y < this.field.length; y++){
-            if (this.field[x][y] != player) {
+        for (int y = 0; y < this.gameField.length(); y++){
+            if (this.gameField.getValue(x, y) != player) {
                 result = false;
                 break;
             }
@@ -149,13 +146,13 @@ public class TicTacToe implements GameRound {
      */
     private boolean diagonalMatches(int player, boolean isFirst){
         int x = 0;
-        int y = isFirst ? 0 : this.field.length - 1;
+        int y = isFirst ? 0 : this.gameField.length() - 1;
         int increment = isFirst ? 1 : -1;
 
         boolean result = true;
 
-        for (int i = 0; i < this.field.length; i++) {
-            if (this.field[x][y] != player){
+        for (int i = 0; i < this.gameField.length(); i++) {
+            if (this.gameField.getValue(x, y) != player){
                 result = false;
                 break;
             }

@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.concurrent.ConcurrentSkipListMap;
 
 
 /**
@@ -57,10 +57,10 @@ public class GameSession implements Callable<String> {
 
     /**
      * additional constructor.
-     * @param initInfo GameSessionInitInfo.
+     * @param initInfo InitGameSessionInfo.
      * @throws Exception
      */
-    public GameSession(GameSessionInitInfo initInfo) throws Exception {
+    public GameSession(InitGameSessionInfo initInfo) throws Exception {
         this(initInfo.getWinConditionType().getWinConditionObject(initInfo.getCount()),
                 initInfo.getGameType());
     }
@@ -96,7 +96,7 @@ public class GameSession implements Callable<String> {
      * @param spectator Spectator.
      * @return true if spectator was added, or false otherwise.
      */
-    public synchronized boolean addSpectator(SocketAddress address, Spectator spectator) {
+    public boolean addSpectator(SocketAddress address, Spectator spectator) {
         boolean result = false;
         if (this.status != Status.Closed && getAvailableSpectatorConnectionsCount() > 0) {
             this.spectators.put(address, spectator);
@@ -111,11 +111,12 @@ public class GameSession implements Callable<String> {
      * @param player Player.
      * @return true if player was added, or false otherwise.
      */
-    public synchronized boolean addPlayer(SocketAddress address, Player player) {
+    public boolean addPlayer(SocketAddress address, Player player) {
         boolean result = false;
         if (this.status == Status.New && getAvailablePlayerConnectionsCount() > 0) {
             if (addSpectator(address, player)) {
                 this.players.put(address, player);
+                player.setId(this.players.size());
                 result = true;
             }
         }
@@ -197,7 +198,7 @@ public class GameSession implements Callable<String> {
         this.gameRound = getNewRound();
         sendBroadcastMessage(this.messagePropertyReader.getString("game.round.started"));
         refreshField();
-        Player[] playersArray = null;
+        Player[] playersArray = {};
         playersArray = this.players.values().toArray(playersArray);
         while (this.status != Status.Closed) {
             try {
