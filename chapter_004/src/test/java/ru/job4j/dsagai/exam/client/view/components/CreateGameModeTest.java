@@ -49,7 +49,7 @@ public class CreateGameModeTest {
      */
     public void checkActionsChain() throws Exception {
         when(view.takeConsoleResponse()).thenReturn("1").thenReturn("1").thenReturn("1").thenReturn("0");
-        when(this.controller.createSession(any(InitGameSessionInfo.class))).thenReturn(true);
+        when(this.controller.createSession(any(InitGameSessionInfo.class))).thenReturn(1);
 
         this.screen.start();
         this.screen.join();
@@ -63,7 +63,7 @@ public class CreateGameModeTest {
     @Test
     public void whenServerReturnFalseThenRefresh() throws Exception {
         when(view.takeConsoleResponse()).thenReturn("1").thenReturn("1").thenReturn("1").thenReturn("0");
-        when(this.controller.createSession(any(InitGameSessionInfo.class))).thenReturn(false);
+        when(this.controller.createSession(any(InitGameSessionInfo.class))).thenReturn(-1);
 
         this.screen.start();
         this.screen.join();

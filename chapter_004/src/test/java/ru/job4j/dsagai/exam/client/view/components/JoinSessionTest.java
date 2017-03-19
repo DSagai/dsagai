@@ -63,7 +63,7 @@ public class JoinSessionTest {
     @Test
     public void whenConnectionUnsuccessfulThenTryAgain() throws Exception {
         Mockito.when(this.view.takeConsoleResponse()).thenReturn("1");
-        Mockito.when(this.controller.connectGameSession("uid1", true)).thenReturn(false);
+        Mockito.when(this.controller.connectGameSession("uid1", true)).thenReturn(-1);
         JoinSession joinSession = new JoinSession(this.controller, this.view, true);
 
         joinSession.start();

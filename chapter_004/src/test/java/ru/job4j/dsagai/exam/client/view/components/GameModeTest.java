@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import ru.job4j.dsagai.exam.client.Controller;
 import ru.job4j.dsagai.exam.client.view.ConsoleView;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
+import ru.job4j.dsagai.exam.server.game.round.GameField;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -34,24 +35,27 @@ public class GameModeTest {
     @Mock
     private ConsoleView view;
     private ByteArrayOutputStream out;
-    private int[][] field = {{0, 0, 3},
-            {1, 0, 2},
-            {0, 1, 0}};
+    //private GameField field = new GameField(3);
 
     private GameMode gameMode;
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        this.gameMode = new GameMode(this.controller, this.view);
+        this.gameMode = new GameMode(this.controller, this.view, 1);
         this.out = new ByteArrayOutputStream();
+        this.gameMode.initGameField(3);
+        this.gameMode.updateCell(new GameCell(0, 2, 3));
+        this.gameMode.updateCell(new GameCell(1, 0, 1));
+        this.gameMode.updateCell(new GameCell(1, 2, 2));
+        this.gameMode.updateCell(new GameCell(2, 1, 1));
         System.setOut(new PrintStream(this.out));
     }
 
     @Test
     public void testOfStringRepresentationOfGameField() {
 
-        this.gameMode.setGameField(this.field);
+
 
         String expectedOutput = String.format("%s%s%s%s%s%s%s%s%s%s%s",
                 " | 1 | 2 | 3 |",
@@ -78,7 +82,7 @@ public class GameModeTest {
         when(this.view.takeConsoleResponse()).thenReturn("34dd").thenReturn("1,23").thenReturn("1,2");
 
         this.gameMode.showMessage("Message1");
-        this.gameMode.updateField(this.field);
+
         this.gameMode.showMessage("Message2");
         this.gameMode.turnRequest();
 
@@ -88,7 +92,7 @@ public class GameModeTest {
 
         assertThat(this.out.toString().contains("Message1"), is(true));
         assertThat(this.out.toString().contains("Message2"), is(true));
-        assertThat(this.out.toString().contains("GAME FIELD UPDATES..."), is(true));
+        assertThat(this.out.toString().contains("GAME IS STARTING..."), is(true));
 
         Pattern pattern = Pattern.compile("Wrong format");
         Matcher matcher = pattern.matcher(out.toString());
@@ -98,7 +102,7 @@ public class GameModeTest {
         }
         assertThat(count, is(2));
 
-        verify(this.controller,times(1)).sendGameTurn(new GameCell(0, 1));
+        verify(this.controller,times(1)).sendGameTurn(new GameCell(0, 1, 1));
     }
 
     @Test

@@ -34,24 +34,25 @@ public class TicTacToeTest {
 
     @Test
     public void whenIllegalCoordinateThenFalse() throws Exception {
-        assertThat(this.gameRound.turn(this.player, - 1, 0), is(false));
-        assertThat(this.gameRound.turn(this.player, 0, -1), is(false));
-        assertThat(this.gameRound.turn(this.player, 3, 0), is(false));
-        assertThat(this.gameRound.turn(this.player, 0, 3), is(false));
+        assertThat(this.gameRound.turn(new GameCell(- 1, 0, this.player)), is(false));
+        assertThat(this.gameRound.turn(new GameCell(0, -1, this.player)), is(false));
+        assertThat(this.gameRound.turn(new GameCell(3, 0, this.player)), is(false));
+        assertThat(this.gameRound.turn(new GameCell(0, 3, this.player)), is(false));
     }
 
     @Test
     public void whenCellIsFreeThenTrueAndCellEqualsPlayer() throws Exception {
         int x = 1;
         int y = 2;
-        assertThat(this.gameRound.turn(this.player, x, y), is(true));
+        assertThat(this.gameRound.turn(new GameCell(x, y, this.player)), is(true));
         assertThat(this.gameRound.getField().getValue(x, y), is(this.player));
     }
 
     @Test
     public void whenCellIsBusyThenFalse() throws Exception {
-        this.gameRound.turn(1, 0, 0);
-        assertThat(this.gameRound.turn(this.player, 0, 0), is(false));
+        GameCell cell = new GameCell(0, 0, 1);
+        this.gameRound.turn(cell);
+        assertThat(this.gameRound.turn(cell), is(false));
     }
 
 
@@ -59,11 +60,11 @@ public class TicTacToeTest {
     @Test
     public void whenVerticalLineFilledThenGameOver() throws Exception {
         int x = 1;
-        this.gameRound.turn(this.player, x, 0);
+        this.gameRound.turn(new GameCell(x, 0, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
-        this.gameRound.turn(this.player, x, 2);
+        this.gameRound.turn(new GameCell(x, 2, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
-        this.gameRound.turn(this.player, x, 1);
+        this.gameRound.turn(new GameCell(x, 1, this.player));
         assertThat(this.gameRound.isGameOver(), is(true));
         assertThat(this.gameRound.getWinnerId(),is(this.player));
     }
@@ -71,11 +72,11 @@ public class TicTacToeTest {
     @Test
     public void whenHorizontalLineFilledThenGameOver() throws Exception {
         int y = 1;
-        this.gameRound.turn(this.player, 1, y);
+        this.gameRound.turn(new GameCell(1, y, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
-        this.gameRound.turn(this.player, 0, y);
+        this.gameRound.turn(new GameCell(0, y, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
-        this.gameRound.turn(this.player, 2, y);
+        this.gameRound.turn(new GameCell(2, y, this.player));
         assertThat(this.gameRound.isGameOver(), is(true));
         assertThat(this.gameRound.getWinnerId(),is(this.player));
     }
@@ -84,13 +85,13 @@ public class TicTacToeTest {
     public void whenFirstDiagonalFilledThenGameOver() throws Exception {
         int x = 0;
         int y = 0;
-        this.gameRound.turn(this.player, x++, y++);
+        this.gameRound.turn(new GameCell(x++, y++, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
 
-        this.gameRound.turn(this.player, x++, y++);
+        this.gameRound.turn(new GameCell(x++, y++, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
 
-        this.gameRound.turn(this.player, x, y);
+        this.gameRound.turn(new GameCell(x, y, this.player));
         assertThat(this.gameRound.isGameOver(), is(true));
         assertThat(this.gameRound.getWinnerId(),is(this.player));
     }
@@ -105,7 +106,8 @@ public class TicTacToeTest {
             y = i / 3;
             x = i - y * 3;
             player = 1 + (i / 2) % 2;
-            this.gameRound.turn(player, x, y);
+            GameCell cell = new GameCell(x, y, player);
+            this.gameRound.turn(cell);
         }
         assertThat(this.gameRound.isGameOver(), is(true));
         assertThat(this.gameRound.getWinnerId(),is(0));
@@ -115,13 +117,13 @@ public class TicTacToeTest {
     public void whenSecondDiagonalFilledThenGameOver() throws Exception {
         int x = 0;
         int y = 2;
-        this.gameRound.turn(this.player, x++, y--);
+        this.gameRound.turn(new GameCell(x++, y--, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
 
-        this.gameRound.turn(this.player, x++, y--);
+        this.gameRound.turn(new GameCell(x++, y--, this.player));
         assertThat(this.gameRound.isGameOver(), is(false));
 
-        this.gameRound.turn(this.player, x, y);
+        this.gameRound.turn(new GameCell(x, y, this.player));
         assertThat(this.gameRound.isGameOver(), is(true));
     }
 }

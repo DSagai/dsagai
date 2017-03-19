@@ -45,7 +45,7 @@ public class ConnectionTest {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(inputInit);
         this.requestMessage = new Message(MessageType.CREATE_GAME, new InitGameSessionInfo(WinConditionTypes.GAMES_COUNT_CONDITION,
                 3, GameTypes.TicTacThreeOnThreeCellsField, 0));
-        this.responseMessage = new Message(MessageType.GAME_TURN_RESPONSE, new GameCell(1, 1));
+        this.responseMessage = new Message(MessageType.GAME_TURN_RESPONSE, new GameCell(1, 1, 1));
 
         objectOutputStream.writeObject(this.requestMessage);
 
