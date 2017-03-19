@@ -203,22 +203,23 @@ public class GameServer {
             GameSession gameSession = new GameSession(initInfo);
             Class<? extends GameRound> gameRoundClass = initInfo.getGameType().getClazz();
             Player player = new RemotePlayer(this.connection);
+            int playerId = -1;
             switch (initInfo.getAddBot()) {
             case 0:
-                gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
+                playerId = gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
                 break;
             case 1:
-                gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
+                playerId = gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
                 gameSession.addPlayer(BotFactory.getFakeAddress(), BotFactory.getBot(gameRoundClass));
                 break;
             case 2:
                 gameSession.addPlayer(BotFactory.getFakeAddress(), BotFactory.getBot(gameRoundClass));
-                gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
+                playerId = gameSession.addPlayer(this.connection.getRemoteSocketAddress(), player);
             }
             this.currentSession = gameSession;
             this.sessionOwner = true;
             GameServer.this.completionService.submit(gameSession);
-            this.connection.send(new Message(MessageType.CONNECTION_ACCEPTED));
+            this.connection.send(new Message(MessageType.SESSION_CONNECTION_RESPONSE, playerId));
             GameServer.this.gameSessions.put(gameSession.getUid(), gameSession);
 
         }
@@ -237,9 +238,9 @@ public class GameServer {
             }
             if (result) {
                 this.currentSession = session;
-                this.connection.send(new Message(MessageType.CONNECTION_ACCEPTED));
+                this.connection.send(new Message(MessageType.SESSION_CONNECTION_RESPONSE, 0));
             } else {
-                this.connection.send(new Message(MessageType.CONNECTION_REFUSED));
+                this.connection.send(new Message(MessageType.SESSION_CONNECTION_RESPONSE, -1));
             }
         }
 
@@ -251,16 +252,14 @@ public class GameServer {
          */
         private void doConnectAsPlayer(String uid) throws IOException {
             GameSession session = GameServer.this.gameSessions.get(uid);
-            boolean result = false;
+            int result = -1;
             if (session != null) {
                 result = session.addPlayer(this.connection.getRemoteSocketAddress(), new RemotePlayer(this.connection));
             }
-            if (result) {
+            if (result > -1) {
                 this.currentSession = session;
-                this.connection.send(new Message(MessageType.CONNECTION_ACCEPTED));
-            } else {
-                this.connection.send(new Message(MessageType.CONNECTION_REFUSED));
             }
+            this.connection.send(new Message(MessageType.SESSION_CONNECTION_RESPONSE, result));
         }
 
         /**

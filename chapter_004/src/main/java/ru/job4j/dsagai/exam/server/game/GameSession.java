@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 
 /**
@@ -111,13 +110,13 @@ public class GameSession implements Callable<String> {
      * @param player Player.
      * @return true if player was added, or false otherwise.
      */
-    public boolean addPlayer(SocketAddress address, Player player) {
-        boolean result = false;
+    public int addPlayer(SocketAddress address, Player player) {
+        int result = -1;
         if (this.status == Status.New && getAvailablePlayerConnectionsCount() > 0) {
             if (addSpectator(address, player)) {
                 this.players.put(address, player);
                 player.setId(this.players.size());
-                result = true;
+                result = player.getId();
             }
         }
         return result;
@@ -197,7 +196,7 @@ public class GameSession implements Callable<String> {
         int i = 0;
         this.gameRound = getNewRound();
         sendBroadcastMessage(this.messagePropertyReader.getString("game.round.started"));
-        refreshField();
+        initField();
         Player[] playersArray = {};
         playersArray = this.players.values().toArray(playersArray);
         while (this.status != Status.Closed) {
@@ -220,6 +219,7 @@ public class GameSession implements Callable<String> {
                         i = 0;
                         this.gameRound = getNewRound();
                         sendBroadcastMessage(this.messagePropertyReader.getString("game.round.started"));
+                        initField();
                     }
                 } else {
                     i++;
@@ -235,11 +235,20 @@ public class GameSession implements Callable<String> {
     }
 
     /**
+     * sends init game field information to all spectators.
+     */
+    private void initField() throws IOException {
+        for (Map.Entry<SocketAddress,Spectator> spectator : this.spectators.entrySet()) {
+            spectator.getValue().initField(this.gameRound.getField().length());
+        }
+    }
+
+    /**
      * sends actual game field to all spectators.
      */
     private void refreshField() throws IOException {
         for (Map.Entry<SocketAddress,Spectator> spectator : this.spectators.entrySet()){
-            spectator.getValue().refreshField(this.gameRound);
+            spectator.getValue().updateField(this.gameRound.getLastTurn());
         }
     }
 

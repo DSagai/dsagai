@@ -96,9 +96,6 @@ public class Connection implements Closeable, Callable<String> {
         boolean result = false;
         try {
             if (outgoing != null) {
-                if (outgoing.getType() == MessageType.FIELD_REFRESH_REQUEST) {
-                    System.out.println(outgoing.getData());
-                }
                 this.out.writeObject(outgoing);
                 result = true;
             }

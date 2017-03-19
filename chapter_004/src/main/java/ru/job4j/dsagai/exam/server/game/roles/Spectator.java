@@ -1,5 +1,6 @@
 package ru.job4j.dsagai.exam.server.game.roles;
 
+import ru.job4j.dsagai.exam.server.game.round.GameCell;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 
 import java.io.IOException;
@@ -17,9 +18,9 @@ public interface Spectator {
 
     /**
      * sends actual game info to client
-     * @param game GameRound current
+     * @param cell GameCell last turn.
      */
-    void refreshField(GameRound game)  throws IOException;
+    void updateField(GameCell cell)  throws IOException;
 
     /**
      * sends text message to client
@@ -32,5 +33,12 @@ public interface Spectator {
      * @throws IOException
      */
     void disconnectMessage() throws IOException;
+
+    /**
+     * sends command to all clients to init game field.
+     * @param fieldSize int size of the field.
+     * @throws IOException
+     */
+    void initField(int fieldSize) throws IOException;
 
 }

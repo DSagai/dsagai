@@ -77,9 +77,9 @@ public class CreateGameMode extends Screen {
                         this.textConsumer.getGameType(),
                         this.textConsumer.getAddBotOption());
 
-                boolean result = getController().createSession(sessionInfo);
-                if (result) {
-                    Screen screen = new GameMode(getController(), getView());
+                int result = getController().createSession(sessionInfo);
+                if (result > -1) {
+                    Screen screen = new GameMode(getController(), getView(), result);
                     getView().setScreen(screen);
                 } else {
                     System.out.println("Creation of game session fails. Try again.");

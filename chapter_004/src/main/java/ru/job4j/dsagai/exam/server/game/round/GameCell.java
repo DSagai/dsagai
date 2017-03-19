@@ -13,15 +13,17 @@ import java.io.Serializable;
 public final class GameCell implements Serializable {
     private final int x;
     private final int y;
+    private final int value;
 
     /**
      * default constructor.
      * @param x int.
      * @param y int.
      */
-    public GameCell(int x, int y) {
+    public GameCell(int x, int y, int value) {
         this.x = x;
         this.y = y;
+        this.value = value;
     }
 
     /**
@@ -38,6 +40,10 @@ public final class GameCell implements Serializable {
      */
     public int getY() {
         return y;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     @Override

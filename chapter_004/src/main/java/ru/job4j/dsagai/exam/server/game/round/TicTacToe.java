@@ -1,7 +1,6 @@
 package ru.job4j.dsagai.exam.server.game.round;
 
 
-import java.util.Arrays;
 
 /**
  * Tic Tac Toe game
@@ -49,22 +48,6 @@ public class TicTacToe implements GameRound {
         return gameOver;
     }
 
-    /**
-     * game turn method
-     * @param player int players personal identity
-     * @param x int.
-     * @param y int.
-     * @return boolean Returns true is game turn was accepted, and false if not.
-     */
-    @Override
-    public boolean turn(int player, int x, int y) {
-        boolean result = this.gameField.updateCell(player, x, y);
-        if (result) {
-            this.cellsClosed++;
-            checkGameCondition(x, y);
-        }
-        return result;
-    }
 
     @Override
     /**
@@ -73,8 +56,14 @@ public class TicTacToe implements GameRound {
      * @param cell GameCell selected by player game cell.
      * @return boolean. Returns true is game turn was accepted, and false if not.
      */
-    public boolean turn(int player, GameCell cell) {
-        return turn(player, cell.getX(), cell.getY());
+    public boolean turn(GameCell cell) {
+        boolean result = this.gameField.updateCell(cell);
+        if (result) {
+            this.cellsClosed++;
+            this.lastTurn = cell;
+            checkGameCondition(cell.getX(), cell.getY());
+        }
+        return result;
     }
 
     @Override
@@ -84,6 +73,11 @@ public class TicTacToe implements GameRound {
      */
     public int getWinnerId() {
         return this.winnerId;
+    }
+
+    @Override
+    public GameCell getLastTurn() {
+        return this.lastTurn;
     }
 
     /**

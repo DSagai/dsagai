@@ -5,7 +5,6 @@ import ru.job4j.dsagai.exam.protocol.Connection;
 import ru.job4j.dsagai.exam.protocol.messages.Message;
 import ru.job4j.dsagai.exam.protocol.messages.MessageType;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
-import ru.job4j.dsagai.exam.server.game.round.GameField;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 import ru.job4j.dsagai.exam.util.MessagePropertyReader;
 
@@ -44,6 +43,10 @@ public class RemotePlayer implements Player {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     /**
      * make next turn.
@@ -61,7 +64,7 @@ public class RemotePlayer implements Player {
                         response.getType().name()));
             }
             GameCell cell = (GameCell) response.getData();
-            result = game.turn(this.id, cell);
+            result = game.turn(cell);
         }
     }
 
@@ -70,8 +73,8 @@ public class RemotePlayer implements Player {
      * sends actual game info to client
      * @param game GameRound current
      */
-    public void refreshField(GameRound game) throws IOException {
-        this.connection.send(new Message(MessageType.FIELD_REFRESH_REQUEST, game.getField()));
+    public void updateField(GameCell cell) throws IOException {
+        this.connection.send(new Message(MessageType.FIELD_UPDATE_REQUEST, cell));
     }
 
     @Override
@@ -90,5 +93,15 @@ public class RemotePlayer implements Player {
      */
     public void disconnectMessage() throws IOException {
         this.connection.send(new Message(MessageType.DISCONNECT_GAME));
+    }
+
+    @Override
+    /**
+     * sends command to all clients to init game field.
+     * @param fieldSize int size of the field.
+     * @throws IOException
+     */
+    public void initField(int fieldSize) throws IOException {
+        this.connection.send(new Message(MessageType.FIELD_INIT, fieldSize));
     }
 }

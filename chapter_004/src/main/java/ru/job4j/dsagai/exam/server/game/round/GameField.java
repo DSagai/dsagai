@@ -15,7 +15,6 @@ public class GameField implements Serializable, Cloneable {
 
     public GameField(int n) {
         this.field = new int[n][n];
-        this.field[0][0] = 1;
     }
 
     public boolean updateCell(int value, int x, int y) {
@@ -31,8 +30,8 @@ public class GameField implements Serializable, Cloneable {
         return result;
     }
 
-    public boolean updateCell(int value, GameCell cell) {
-        return updateCell(value, cell.getX(), cell.getY());
+    public boolean updateCell(GameCell cell) {
+        return updateCell(cell.getValue(), cell.getX(), cell.getY());
     }
 
     public int[][] getArrayRepresentation() {

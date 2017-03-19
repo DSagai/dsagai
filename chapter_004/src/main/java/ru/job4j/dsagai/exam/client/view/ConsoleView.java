@@ -4,7 +4,8 @@ import ru.job4j.dsagai.exam.client.Controller;
 import ru.job4j.dsagai.exam.client.view.components.GameMode;
 import ru.job4j.dsagai.exam.client.view.components.MenuMode;
 import ru.job4j.dsagai.exam.client.view.components.Screen;
-import ru.job4j.dsagai.exam.server.game.round.GameField;
+import ru.job4j.dsagai.exam.server.game.round.GameCell;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,9 +86,20 @@ public class ConsoleView implements View {
      * redirects server request to the screen, if
      * it is GameMode.
      */
-    public void updateField(GameField field) {
+    public void updateField(GameCell cell) {
         if (this.screen instanceof GameMode) {
-            ((GameMode)this.screen).updateField(field.getArrayRepresentation());
+            ((GameMode)this.screen).updateField(cell);
+        }
+    }
+
+    @Override
+    /**
+     * redirects server request to the screen, if
+     * it is GameMode.
+     */
+    public void initField(int fieldSize) {
+        if (this.screen instanceof GameMode) {
+            ((GameMode)this.screen).initGameField(fieldSize);
         }
     }
 

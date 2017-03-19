@@ -1,6 +1,8 @@
 package ru.job4j.dsagai.exam.server.game.roles.bots;
 
 import ru.job4j.dsagai.exam.server.game.roles.Player;
+import ru.job4j.dsagai.exam.server.game.round.GameCell;
+import ru.job4j.dsagai.exam.server.game.round.GameField;
 import ru.job4j.dsagai.exam.server.game.round.GameRound;
 
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.io.IOException;
  */
 
 public class TicTacBot implements Player {
-    private int[][] gameField;
+    GameField gameField;
     private int id;
 
     /**
@@ -32,6 +34,11 @@ public class TicTacBot implements Player {
     }
 
     @Override
+    public int getId() {
+        return this.id;
+    }
+
+    @Override
     public void makeTurn(GameRound game) {
         //TODO: implement algorithm
     }
@@ -40,8 +47,8 @@ public class TicTacBot implements Player {
     /**
      * copies game field into own field.
      */
-    public void refreshField(GameRound game) {
-        this.gameField = game.getField().getArrayRepresentation();
+    public void updateField(GameCell cell) {
+        this.gameField.updateCell(cell);
     }
 
     @Override
@@ -56,6 +63,14 @@ public class TicTacBot implements Player {
      */
     public void disconnectMessage() throws IOException {
 
+    }
+
+    @Override
+    /**
+     * inits gameField.
+     */
+    public void initField(int fieldSize) throws IOException {
+        this.gameField = new GameField(fieldSize);
     }
 
 

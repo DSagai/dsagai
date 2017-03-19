@@ -15,7 +15,6 @@ import ru.job4j.dsagai.exam.server.game.round.GameField;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.FutureTask;
@@ -53,9 +52,11 @@ public class Controller extends Thread {
                 try {
                     Message incoming = this.connection.getRequests();
                     switch (incoming.getType()){
+                        case FIELD_INIT: this.view.initField((int)incoming.getData());
+                        break;
                         case GAME_TURN_REQUEST: this.view.turnRequest();
                         break;
-                        case FIELD_REFRESH_REQUEST: this.view.updateField((GameField)incoming.getData());
+                        case FIELD_UPDATE_REQUEST: this.view.updateField((GameCell) incoming.getData());
                         break;
                         case DISCONNECT_GAME: this.view.disconnectSession();
                         break;
@@ -134,20 +135,19 @@ public class Controller extends Thread {
      * @param initInfo InitGameSessionInfo.
      * @return true if game session was successfully created and player was connected.
      */
-    public boolean createSession(InitGameSessionInfo initInfo) {
-        boolean result = false;
+    public int createSession(InitGameSessionInfo initInfo) {
+        int result = -1;
         if (this.connected) {
             try {
                 this.connection.send(new Message(MessageType.CREATE_GAME, initInfo));
                 Message response = this.connection.getResponses();
                 switch (response.getType()) {
-                    case CONNECTION_ACCEPTED:
-                        result = true;
+                    case SESSION_CONNECTION_RESPONSE:
+                        result = (int)response.getData();
                         break;
                     default:
-                        throw new UnexpectedMessageType(String.format("Expected %s or %s, but received %s",
-                                MessageType.CONNECTION_ACCEPTED,
-                                MessageType.CONNECTION_REFUSED,
+                        throw new UnexpectedMessageType(String.format("Expected %s, but received %s",
+                                MessageType.SESSION_CONNECTION_RESPONSE,
                                 response.getType()));
                 }
             } catch (Exception e) {
@@ -166,24 +166,20 @@ public class Controller extends Thread {
      * @param isPlayer boolean. True if you want to connect as player, false if you want to connect as spectator.
      * @return true if connected, otherwise false.
      */
-    public boolean connectGameSession(String uid, boolean isPlayer) {
-        boolean result = false;
+    public int connectGameSession(String uid, boolean isPlayer) {
+        int result = -1;
         if (this.connected) {
             try {
                 MessageType messageType = isPlayer ? MessageType.CONNECT_AS_PLAYER : MessageType.CONNECT_AS_SPECTATOR;
                 this.connection.send(new Message(messageType, uid));
                 Message response = this.connection.getResponses();
                 switch (response.getType()) {
-                    case CONNECTION_ACCEPTED:
-                        result = true;
-                        break;
-                    case CONNECTION_REFUSED:
-                        result = false;
+                    case SESSION_CONNECTION_RESPONSE:
+                        result = (int)response.getData();
                         break;
                     default:
-                        throw new UnexpectedMessageType(String.format("Expected %s or %s, but received %s",
-                                MessageType.CONNECTION_ACCEPTED,
-                                MessageType.CONNECTION_REFUSED,
+                        throw new UnexpectedMessageType(String.format("Expected %s, but received %s",
+                                MessageType.SESSION_CONNECTION_RESPONSE,
                                 response.getType()));
                 }
             } catch (Exception e) {

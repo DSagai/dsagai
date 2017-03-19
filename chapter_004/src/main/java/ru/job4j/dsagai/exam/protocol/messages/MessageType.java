@@ -20,14 +20,16 @@ public enum MessageType {
     DISCONNECT_GAME(true),
     DISCONNECT_SERVER(true),
     GAME_TURN_REQUEST(true),
-    FIELD_REFRESH_REQUEST(true),
+    FIELD_INIT(true),
+    FIELD_UPDATE_REQUEST(true),
     TEXT_MESSAGE(true),
     //responses
     ACTIVE_SESSIONS_RESPONSE(false),
     CONNECTION_ACCEPTED(false),
     CONNECTION_REFUSED(false),
     VERSION_RESPONSE(false),
-    GAME_TURN_RESPONSE(false);
+    GAME_TURN_RESPONSE(false),
+    SESSION_CONNECTION_RESPONSE(false);
 
     //defines does message belong to request type
     private final boolean request;

@@ -7,6 +7,7 @@ import ru.job4j.dsagai.exam.client.view.components.actions.ActionReadConsole;
 import ru.job4j.dsagai.exam.client.view.components.actions.ActionShowText;
 import ru.job4j.dsagai.exam.client.view.components.actions.TextConsumer;
 import ru.job4j.dsagai.exam.server.game.round.GameCell;
+import ru.job4j.dsagai.exam.server.game.round.GameField;
 
 
 import java.util.Properties;
@@ -23,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class GameMode extends Screen {
     private static final Properties CONSOLE_MARKS = new Properties();
     private final static String PROP_PATH = "exam/client/console.marks.properties";
+    private final int playerId;
 
     {
         try {
@@ -66,24 +68,31 @@ public class GameMode extends Screen {
             String[] coordinates = text.split(",");
             int x = Integer.parseInt(coordinates[0]);
             int y = Integer.parseInt(coordinates[1]);
-            if (x < 1 || x > GameMode.this.gameField.length
-                    || y < 1 || y > GameMode.this.gameField.length) {
+            if (x < 1 || x > GameMode.this.gameField.length()
+                    || y < 1 || y > GameMode.this.gameField.length()) {
                 throw new IndexOutOfBoundsException();
             }
-            return new GameCell(x - 1, y - 1);
+            return new GameCell(x - 1, y - 1, GameMode.this.playerId);
         }
     };
 
     // actual game field information.
-    private int[][] gameField;
+    private GameField gameField = new GameField(0);
 
     /**
      * default constructor.
      * @param controller Controller.
      * @param view ConsoleView.
      */
-    public GameMode(Controller controller, ConsoleView view) {
+    public GameMode(Controller controller, ConsoleView view, int playerId) {
         super(controller, view);
+        this.playerId = playerId;
+    }
+
+    public void initGameField(int fieldSize) {
+        showMessage(String.format("GAME IS STARTING...%n"));
+        this.gameField = new GameField(fieldSize);
+        refresh();
     }
 
     @Override
@@ -133,20 +142,20 @@ public class GameMode extends Screen {
     }
 
     /**
-     * setter for gameField.
-     * @param gameField int[][].
+     * updates cell of gameField.
+     * @param cell GameCell.
      */
-    public void setGameField(int[][] gameField) {
-        this.gameField = gameField;
+    public void updateCell(GameCell cell) {
+        this.gameField.updateCell(cell);
     }
 
     /**
      * sets up new gameField and make Output to the screen.
-     * @param field int[][].
+     * @param cell GameCell.
      */
-    public void updateField(int[][] field) {
+    public void updateField(GameCell cell) {
         showMessage(String.format("GAME FIELD UPDATES...%n"));
-        setGameField(field);
+        updateCell(cell);
         refresh();
         showMessage(String.format("%n"));
     }
@@ -167,7 +176,7 @@ public class GameMode extends Screen {
     public String getTextRepresentation() {
         StringBuilder builder = new StringBuilder();
         createHeader(builder);
-        for (int i = 0; i < this.gameField[0].length; i++) {
+        for (int i = 0; i < this.gameField.length(); i++) {
             processRow(i, builder);
         }
 
@@ -181,11 +190,11 @@ public class GameMode extends Screen {
      */
     private void createHeader(StringBuilder builder) {
         builder.append(" |");
-        for (int i = 0; i < this.gameField.length; i++) {
+        for (int i = 0; i < this.gameField.length(); i++) {
             builder.append(String.format(" %d |", i + 1));
         }
         builder.append(String.format("%n_|"));
-        for (int i = 0; i < this.gameField.length; i++) {
+        for (int i = 0; i < this.gameField.length(); i++) {
             builder.append("___|");
         }
     }
@@ -199,18 +208,18 @@ public class GameMode extends Screen {
     private void processRow(int row, StringBuilder builder) {
 
         builder.append(String.format("%n |"));
-        for (int i = 0; i < this.gameField.length; i++) {
+        for (int i = 0; i < this.gameField.length(); i++) {
             builder.append("   |");
         }
         builder.append(String.format("%n%d|", row + 1));
-        for (int i = 0; i < this.gameField.length; i++) {
-            String cellValue = this.gameField[row][i] == 0
+        for (int i = 0; i < this.gameField.length(); i++) {
+            String cellValue = this.gameField.getArrayRepresentation()[row][i] == 0
                     ? " "
-                    : CONSOLE_MARKS.getProperty(String.valueOf(this.gameField[row][i]));
+                    : CONSOLE_MARKS.getProperty(String.valueOf(this.gameField.getArrayRepresentation()[row][i]));
             builder.append(String.format(" %s |", cellValue));
         }
         builder.append(String.format("%n_|"));
-        for (int i = 0; i < this.gameField.length; i++) {
+        for (int i = 0; i < this.gameField.length(); i++) {
             builder.append("___|");
         }
     }

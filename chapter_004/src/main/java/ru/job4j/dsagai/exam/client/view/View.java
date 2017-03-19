@@ -1,5 +1,6 @@
 package ru.job4j.dsagai.exam.client.view;
 
+import ru.job4j.dsagai.exam.server.game.round.GameCell;
 import ru.job4j.dsagai.exam.server.game.round.GameField;
 
 /**
@@ -18,9 +19,15 @@ public interface View {
 
     /**
      * sends to the client updated game field.
-     * @param field int[][]
+     * @param cell GameCell
      */
-    void updateField(GameField field);
+    void updateField(GameCell cell);
+
+    /**
+     * inits client side GameField object.
+     * @param fieldSize int.
+     */
+    void initField(int fieldSize);
 
     /**
      * informs client, what he was disconnected

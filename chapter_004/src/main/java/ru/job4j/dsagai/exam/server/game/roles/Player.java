@@ -22,6 +22,11 @@ public interface Player extends Spectator {
     void setId(int id);
 
     /**
+     * getter for id field.
+     * @return int id.
+     */
+    int getId();
+    /**
      * make next turn.
      * @param game GameRound current game round.
      */
