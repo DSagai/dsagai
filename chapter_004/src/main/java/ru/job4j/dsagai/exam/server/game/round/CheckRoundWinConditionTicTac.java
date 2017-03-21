@@ -12,6 +12,10 @@ public class CheckRoundWinConditionTicTac {
     //contains all pure win combinations.
     private int[] winMask;
 
+    public CheckRoundWinConditionTicTac(int size) {
+        initMask(size);
+    }
+
     /**
      * fills all pure win combinations.
      * @param size int.

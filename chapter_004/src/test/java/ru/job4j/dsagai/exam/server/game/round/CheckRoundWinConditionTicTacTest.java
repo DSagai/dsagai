@@ -14,11 +14,12 @@ import static org.junit.Assert.*;
  */
 
 public class CheckRoundWinConditionTicTacTest {
-    private CheckRoundWinConditionTicTac ticTac= new CheckRoundWinConditionTicTac();
+ 
 
     @Test
     public void testThreeOnThree() throws Exception {
-        this.ticTac.initMask(3);
+        CheckRoundWinConditionTicTac ticTac= new CheckRoundWinConditionTicTac(3);
+
         int[][] field = {
                 {0, 0, 1},
                 {2, 0, 1},
