@@ -35,7 +35,6 @@ public class GameModeTest {
     @Mock
     private ConsoleView view;
     private ByteArrayOutputStream out;
-    //private GameField field = new GameField(3);
 
     private GameMode gameMode;
 
@@ -79,7 +78,7 @@ public class GameModeTest {
      */
     public void checkActionsQueue() throws Exception {
         this.gameMode.start();
-        when(this.view.takeConsoleResponse()).thenReturn("34dd").thenReturn("1,23").thenReturn("1,2");
+        when(this.view.takeConsoleResponse()).thenReturn("34dd").thenReturn("1,23").thenReturn("2,1");
 
         this.gameMode.showMessage("Message1");
 
