@@ -138,7 +138,7 @@ public class GameSession implements Callable<String> {
      * @param address
      */
     private void removePlayer(SocketAddress address) {
-
+        this.spectators.remove(address);
         this.players.remove(address);
         if (this.status == Status.Started){
             this.status = Status.Closed;
@@ -177,12 +177,14 @@ public class GameSession implements Callable<String> {
      * waiting for players.
      * if there are no active connections then close the session.
      */
-    private void waitForPlayersLoop() {
+    private void waitForPlayersLoop() throws InterruptedException {
         while (getAvailablePlayerConnectionsCount() != 0){
             if (this.players.isEmpty() && this.spectators.isEmpty()){
                 close(this.messagePropertyReader.getString("game.end.no.connections"));
             }
+            Thread.currentThread().sleep(1000);
         }
+        this.status = Status.Started;
     }
 
     /**
@@ -309,7 +311,7 @@ public class GameSession implements Callable<String> {
      * @return true if game session is still active (has status New or Started), otherwise returns false.
      */
     public boolean isActive() {
-        return this.status != Status.Closed;
+        return this.status == Status.New;
     }
 
     /**

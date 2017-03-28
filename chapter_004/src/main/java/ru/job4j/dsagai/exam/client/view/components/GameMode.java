@@ -66,8 +66,8 @@ public class GameMode extends Screen {
          */
         private GameCell parse(String text) throws Exception {
             String[] coordinates = text.split(",");
-            int x = Integer.parseInt(coordinates[0]);
-            int y = Integer.parseInt(coordinates[1]);
+            int x = Integer.parseInt(coordinates[1]);
+            int y = Integer.parseInt(coordinates[0]);
             if (x < 1 || x > GameMode.this.gameField.length()
                     || y < 1 || y > GameMode.this.gameField.length()) {
                 throw new IndexOutOfBoundsException();
