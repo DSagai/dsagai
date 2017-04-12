@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TodoList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="todo.list.xsd">
+    <TodoTask id="1" Description="AAA" created="1970-01-01T01:00:00+01:00" done="true"/>
+    <TodoTask id="2" Description="BBB" created="1970-01-01T01:00:00+01:00" done="false"/>
+</TodoList>

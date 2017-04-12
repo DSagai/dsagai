@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Todo Ajax</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css"/>
+    <script type="text/javascript" src="resources/scripts/ajaxTodo.js"></script>
+</head>
+<body onload="init()">
+<h2>TODO List</h2>
+
+<br>
+
+<form method="post" action="">
+    <table>
+        <tr>
+            <th>
+                New Task
+            </th>
+            <th>
+                <input type="submit" value="Add">
+            </th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="text" placeholder="Enter task description here." required>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<br>
+
+<table id = "outputTable">
+    <tr>
+        <th colspan="3">
+            <a href="" id="showAll">Show all</a>
+        </th>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <th>Created</th>
+        <th>Completed</th>
+    </tr>
+</table>
+</body>
+</html>

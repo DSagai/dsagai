@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="TodoList">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="TodoTask" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TodoTask">
+        <xsd:complexType>
+            <xsd:attribute name="id" type="xsd:int" use="required"/>
+            <xsd:attribute name="Description" type="xsd:string" use="required"/>
+            <xsd:attribute name="created" type="xsd:dateTime" use="required"/>
+            <xsd:attribute name="done" type="xsd:boolean" use="required" default="false"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

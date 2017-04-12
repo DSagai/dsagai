@@ -16,6 +16,7 @@
     <modules>
         <module>chapter_001</module>
         <module>chapter_004</module>
+        <module>chapter_010</module>
     </modules>
 
     <build>
