@@ -29,8 +29,8 @@ public class XmlConverterTest {
         String result = XmlConverter.getInstance().toXml(list);
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
                 "<TodoList>" +
-                "<TodoTask id=\"1\" description=\"AAA\" created=\"1970-01-01T01:00:00+01:00\" done=\"true\"/>" +
-                "<TodoTask id=\"2\" description=\"BBB\" created=\"1970-01-01T01:00:00+01:00\" done=\"false\"/>" +
+                "<TodoTask id=\"1\" description=\"AAA\" created=\"0\" done=\"true\"/>" +
+                "<TodoTask id=\"2\" description=\"BBB\" created=\"0\" done=\"false\"/>" +
                 "</TodoList>";
         assertThat(result, is(expected));
     }

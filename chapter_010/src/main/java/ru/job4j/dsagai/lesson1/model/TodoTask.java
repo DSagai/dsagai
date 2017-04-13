@@ -33,7 +33,7 @@ public class TodoTask {
     @Basic
     @Column(name = "create_date", nullable = false)
     @XmlAttribute(name = "created")
-    private Date created = new Date();
+    private Long created = new Date().getTime();
 
     @Basic
     @Column(name = "done", nullable = false, columnDefinition = "boolean default false")
@@ -55,7 +55,7 @@ public class TodoTask {
         this.id = id;
         this.description = description;
         this.done = done;
-        this.created = created;
+        this.created = created.getTime();
     }
 
 
@@ -71,7 +71,7 @@ public class TodoTask {
 
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 
 
@@ -90,7 +90,7 @@ public class TodoTask {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public boolean isDone() {
@@ -123,5 +123,9 @@ public class TodoTask {
         int result = description.hashCode();
         result = 31 * result + (done ? 1 : 0);
         return result;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
     }
 }

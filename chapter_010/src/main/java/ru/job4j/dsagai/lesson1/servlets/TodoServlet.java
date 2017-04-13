@@ -71,8 +71,7 @@ public class TodoServlet extends HttpServlet {
         task.setDescription(description);
 
         if (createdParam != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss", Locale.ENGLISH);
-            task.setCreated(dateFormat.parse(createdParam));
+            task.setCreated(Long.parseLong(createdParam));
         }
 
         if (doneParam != null) {

@@ -19,13 +19,7 @@ function init() {
 
 function updateTodoTable() {
     var params = "command=List&showAll="+showAll;
-    req = initRequest();
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.setRequestHeader("Content-length", params.length);
-    req.setRequestHeader("Connection", "close");
-    req.onreadystatechange = callback;
-    req.send(params);
+    sendRequest(params);
 }
 
 function parseMessage(responseXML) {
@@ -41,7 +35,7 @@ function parseMessage(responseXML) {
                 var task = todoTasks.childNodes[i];
                 var id = task.getAttribute("id");
                 var description = task.getAttribute("description");
-                var created = task.getAttribute("created");
+                var created = new Date(Number(task.getAttribute("created")));
                 var done = task.getAttribute("done");
                 addRow(id, description, created, done);
             }
@@ -54,15 +48,31 @@ function addRow(id, description, created, done) {
     var descriptionCell;
     var createdCell;
     var doneCell;
+    var doneCheckBox;
 
     outputTable.style.display = 'table';
     row = document.createElement("tr");
+
     descriptionCell = document.createElement("td");
-    descriptionCell.appendChild(document.createTextNode(description));
+    descriptionCell.setAttribute("class","description");
+    //descriptionCell.appendChild(document.createTextNode(description));
+    descriptionCell.textContent = description;
+
     createdCell = document.createElement("td");
-    createdCell.appendChild(document.createTextNode(created));
+    createdCell.setAttribute("class","created");
+    //createdCell.appendChild(document.createTextNode(created));
+    createdCell.textContent = created;
+
     doneCell = document.createElement("td");
-    doneCell.appendChild(document.createTextNode(done));
+    doneCell.setAttribute("class","done");
+    doneCheckBox = document.createElement("input");
+    doneCheckBox.setAttribute("type", "checkbox");
+    doneCheckBox.setAttribute("onClick","updateTask(this);");
+    if (done == "true") {
+        doneCheckBox.setAttribute("checked", null);
+    }
+    doneCheckBox.setAttribute("todoId",id);
+    doneCell.appendChild(doneCheckBox);
     row.appendChild(descriptionCell);
     row.appendChild(createdCell);
     row.appendChild(doneCell);
@@ -119,13 +129,30 @@ function addTask() {
     var description = document.getElementById("description").value;
     if (description != "") {
         var params = "command=add_update&description=" + description + "&showAll=" + showAll;
-        req = initRequest();
-        req.open("POST", url, true);
-        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        req.setRequestHeader("Content-length", params.length);
-        req.setRequestHeader("Connection", "close");
-        req.onreadystatechange = callback;
-        req.send(params);
-        document.getElementById("description").value = "";
+        sendRequest(params);
     }
+    document.getElementById("description").value = "";
+}
+
+function updateTask(elem) {
+    var id = elem.getAttribute("todoId");
+    var done = elem.checked;
+    var row = elem.parentElement.parentElement;
+
+    var description = row.getElementsByClassName("description")[0].textContent;
+    var created = new Date(row.getElementsByClassName("created")[0].textContent).getTime();
+
+    var params = "command=add_update&description=" + description + "&showAll=" + showAll +
+        "&created=" + created + "&done=" + done + "&id=" + id;
+    sendRequest(params);
+}
+
+function sendRequest(params) {
+    req = initRequest();
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.setRequestHeader("Content-length", params.length);
+    req.setRequestHeader("Connection", "close");
+    req.onreadystatechange = callback;
+    req.send(params);
 }
