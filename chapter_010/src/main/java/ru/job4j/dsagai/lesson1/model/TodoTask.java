@@ -27,7 +27,7 @@ public class TodoTask {
 
     @Basic
     @Column(name = "description", nullable = false)
-    @XmlAttribute(name = "Description")
+    @XmlAttribute(name = "description")
     private String description;
 
     @Basic

@@ -116,8 +116,8 @@ public class TodoServletTest {
 
         String expected = "<\\?xml version=\"1\\.0\" encoding=\"UTF-8\" standalone=\"yes\"\\?>" +
                 "<TodoList>" +
-                "<TodoTask id=\"\\d+?\" Description=\"AAA\" created=\"1970-01-01T01:00:00\\+01:00\" done=\"true\"/>" +
-                "<TodoTask id=\"\\d+?\" Description=\"BBB\" created=\"1970-01-01T01:00:00\\+01:00\" done=\"false\"/>" +
+                "<TodoTask id=\"\\d+?\" description=\"AAA\" created=\"1970-01-01T01:00:00\\+01:00\" done=\"true\"/>" +
+                "<TodoTask id=\"\\d+?\" description=\"BBB\" created=\"1970-01-01T01:00:00\\+01:00\" done=\"false\"/>" +
                 "</TodoList>";
 
         Pattern pattern = Pattern.compile(expected);

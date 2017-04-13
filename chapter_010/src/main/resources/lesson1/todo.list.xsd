@@ -10,7 +10,7 @@
     <xsd:element name="TodoTask">
         <xsd:complexType>
             <xsd:attribute name="id" type="xsd:int" use="required"/>
-            <xsd:attribute name="Description" type="xsd:string" use="required"/>
+            <xsd:attribute name="description" type="xsd:string" use="required"/>
             <xsd:attribute name="created" type="xsd:dateTime" use="required"/>
             <xsd:attribute name="done" type="xsd:boolean" use="required" default="false"/>
         </xsd:complexType>

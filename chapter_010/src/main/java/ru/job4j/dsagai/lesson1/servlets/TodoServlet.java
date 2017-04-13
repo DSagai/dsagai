@@ -57,7 +57,7 @@ public class TodoServlet extends HttpServlet {
      * @param resp
      * @throws ParseException
      */
-    private void addUpdate(HttpServletRequest req, HttpServletResponse resp) throws ParseException {
+    private void addUpdate(HttpServletRequest req, HttpServletResponse resp) throws ParseException, IOException {
         String idParam = req.getParameter("id");
         String description = req.getParameter("description");
         String createdParam = req.getParameter("created");
@@ -80,6 +80,7 @@ public class TodoServlet extends HttpServlet {
         }
 
         this.storage.addUpdateTask(task);
+        resp.sendRedirect(req.getContextPath());
 
     }
 

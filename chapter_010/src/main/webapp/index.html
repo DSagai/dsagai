@@ -11,7 +11,8 @@
 
 <br>
 
-<form method="post" action="">
+<form method="post" action="TodoTaskServlet">
+    <input type="hidden" name="command" value="add_update"/>
     <table>
         <tr>
             <th>
@@ -23,7 +24,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <input type="text" placeholder="Enter task description here." required>
+                <input type="text" name="description" placeholder="Enter task description here." required>
             </td>
         </tr>
     </table>
@@ -31,10 +32,10 @@
 
 <br>
 
-<table id = "outputTable">
+<table id="header">
     <tr>
         <th colspan="3">
-            <a href="" id="showAll">Show all</a>
+            <button id="showAll" onclick="onClickShowAll()"></button>
         </th>
     </tr>
     <tr>
@@ -42,6 +43,9 @@
         <th>Created</th>
         <th>Completed</th>
     </tr>
+</table>
+<table id = "outputTable">
+
 </table>
 </body>
 </html>
