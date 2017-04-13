@@ -40,8 +40,9 @@ public class TodoServletTest {
     private TaskStorage storage = TaskStorage.getInstance();
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(this.response.getWriter()).thenReturn(new PrintWriter(new ByteArrayOutputStream()));
     }
 
     @Test
@@ -49,6 +50,7 @@ public class TodoServletTest {
 
         when(this.request.getParameter("command")).thenReturn("add_update");
         when(this.request.getParameter("description")).thenReturn("AAA");
+        when(this.request.getParameter("showAll")).thenReturn("true");
         new TodoServlet().doPost(this.request, this.response);
 
         boolean result = false;
@@ -78,6 +80,7 @@ public class TodoServletTest {
         }
 
         when(this.request.getParameter("command")).thenReturn("add_update");
+        when(this.request.getParameter("showAll")).thenReturn("true");
         when(this.request.getParameter("description")).thenReturn(description);
         when(this.request.getParameter("id")).thenReturn(String.valueOf(id));
         when(this.request.getParameter("done")).thenReturn("true");

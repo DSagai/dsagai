@@ -80,7 +80,7 @@ public class TodoServlet extends HttpServlet {
         }
 
         this.storage.addUpdateTask(task);
-        resp.sendRedirect(req.getContextPath());
+        sendList(req, resp);
 
     }
 

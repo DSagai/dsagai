@@ -11,24 +11,23 @@
 
 <br>
 
-<form method="post" action="TodoTaskServlet">
-    <input type="hidden" name="command" value="add_update"/>
+
     <table>
         <tr>
             <th>
                 New Task
             </th>
             <th>
-                <input type="submit" value="Add">
+                <button onclick="addTask()">Add</button>
             </th>
         </tr>
         <tr>
             <td colspan="2">
-                <input type="text" name="description" placeholder="Enter task description here." required>
+                <input type="text" id="description" name="description" placeholder="Enter task description here." required>
             </td>
         </tr>
     </table>
-</form>
+
 
 <br>
 

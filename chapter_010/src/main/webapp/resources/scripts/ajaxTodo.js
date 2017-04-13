@@ -6,17 +6,18 @@ var req;
 var isIE;
 var showAll;
 var outputTable;
+var url;
 
 
 
 
 function init() {
+    url= "TodoTaskServlet";
     outputTable = document.getElementById("outputTable");
     onClickShowAll();
 }
 
 function updateTodoTable() {
-    var url = "TodoTaskServlet";
     var params = "command=List&showAll="+showAll;
     req = initRequest();
     req.open("POST", url, true);
@@ -53,8 +54,6 @@ function addRow(id, description, created, done) {
     var descriptionCell;
     var createdCell;
     var doneCell;
-
-
 
     outputTable.style.display = 'table';
     row = document.createElement("tr");
@@ -107,11 +106,26 @@ function onClickShowAll() {
     var alterValue = "Hide completed";
     var showAllElem = document.getElementById("showAll");
     if (showAllElem.textContent == showAllDefaultValue) {
-        showAll = false;
+        showAll = true;
         showAllElem.textContent = alterValue;
     } else {
-        showAll = true;
+        showAll = false;
         showAllElem.textContent = showAllDefaultValue;
     }
     updateTodoTable();
+}
+
+function addTask() {
+    var description = document.getElementById("description").value;
+    if (description != "") {
+        var params = "command=add_update&description=" + description + "&showAll=" + showAll;
+        req = initRequest();
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.setRequestHeader("Content-length", params.length);
+        req.setRequestHeader("Connection", "close");
+        req.onreadystatechange = callback;
+        req.send(params);
+        document.getElementById("description").value = "";
+    }
 }
