@@ -1,8 +1,7 @@
 package ru.job4j.dsagai.lesson1.servlets;
 
-import ru.job4j.dsagai.lesson1.model.TodoList;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.job4j.dsagai.lesson1.model.TodoTask;
-import ru.job4j.dsagai.lesson1.services.XmlConverter;
 import ru.job4j.dsagai.lesson1.storage.TaskStorage;
 
 import javax.servlet.ServletException;
@@ -11,9 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.List;
+
 
 /**
  * Servlet processes requests from TodoTable web application.
@@ -26,7 +26,7 @@ import java.util.Locale;
 public class TodoServlet extends HttpServlet {
 
     private final TaskStorage storage = TaskStorage.getInstance();
-    private final XmlConverter xmlConverter = XmlConverter.getInstance();
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -91,10 +91,11 @@ public class TodoServlet extends HttpServlet {
      */
     private void sendList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         boolean showAll = Boolean.parseBoolean(req.getParameter("showAll"));
-        TodoList list = new TodoList(this.storage.getTaskList(showAll));
-        if (list.getSize() > 0) {
-            resp.setContentType("text/xml");
-            resp.getWriter().write(this.xmlConverter.toXml(list));
+        List<TodoTask> list = this.storage.getTaskList(showAll);
+        if (list.size() > 0) {
+            resp.setContentType("application/json");
+            Writer writer = resp.getWriter();
+            this.jsonMapper.writeValue(writer, list);
         } else {
             resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

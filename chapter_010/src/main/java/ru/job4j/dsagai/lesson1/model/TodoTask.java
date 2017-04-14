@@ -4,7 +4,6 @@ package ru.job4j.dsagai.lesson1.model;
 
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 /**
@@ -16,28 +15,22 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "items")
-@XmlRootElement(name = "TodoTask")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TodoTask {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    @XmlAttribute(name = "id")
     private int id;
 
     @Basic
     @Column(name = "description", nullable = false)
-    @XmlAttribute(name = "description")
     private String description;
 
     @Basic
     @Column(name = "create_date", nullable = false)
-    @XmlAttribute(name = "created")
     private Long created = new Date().getTime();
 
     @Basic
     @Column(name = "done", nullable = false, columnDefinition = "boolean default false")
-    @XmlAttribute(name = "done")
     private boolean done;
 
     /**

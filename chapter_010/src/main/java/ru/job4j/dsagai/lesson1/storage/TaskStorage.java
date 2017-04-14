@@ -19,13 +19,13 @@ import java.util.List;
  * @since 05.04.2017
  */
 public class TaskStorage {
-    private static TaskStorage instance;
+
+    private static class InstanceHolder {
+        private static final TaskStorage instance = new TaskStorage();
+    }
 
     public static TaskStorage getInstance() {
-        if (instance == null) {
-            instance = new TaskStorage();
-        }
-        return instance;
+        return InstanceHolder.instance;
     }
 
     private final SessionFactory factory;

@@ -22,21 +22,22 @@ function updateTodoTable() {
     sendRequest(params);
 }
 
-function parseMessage(responseXML) {
+function parseMessage(responseText) {
     // no matches returned
-    if (responseXML == null) {
+    if (responseText == null) {
         return false;
     } else {
-        var todoTasks = responseXML.getElementsByTagName("TodoList")[0];
-        if (todoTasks.childNodes.length > 0) {
+        //var todoTasks = responseXML.getElementsByTagName("TodoList")[0];
+        var todoTasks = JSON.parse(responseText);
+        if (todoTasks.length > 0) {
             outputTable.setAttribute("bordercolor", "black");
             outputTable.setAttribute("border", "1");
-            for (i = 0; i < todoTasks.childNodes.length; i++){
-                var task = todoTasks.childNodes[i];
-                var id = task.getAttribute("id");
-                var description = task.getAttribute("description");
-                var created = new Date(Number(task.getAttribute("created")));
-                var done = task.getAttribute("done");
+            for (i = 0; i < todoTasks.length; i++){
+                var task = todoTasks[i];
+                var id = task.id;
+                var description = task.description;
+                var created = new Date(task.created);
+                var done = task.done;
                 addRow(id, description, created, done);
             }
         }
@@ -55,12 +56,10 @@ function addRow(id, description, created, done) {
 
     descriptionCell = document.createElement("td");
     descriptionCell.setAttribute("class","description");
-    //descriptionCell.appendChild(document.createTextNode(description));
     descriptionCell.textContent = description;
 
     createdCell = document.createElement("td");
     createdCell.setAttribute("class","created");
-    //createdCell.appendChild(document.createTextNode(created));
     createdCell.textContent = created;
 
     doneCell = document.createElement("td");
@@ -68,7 +67,7 @@ function addRow(id, description, created, done) {
     doneCheckBox = document.createElement("input");
     doneCheckBox.setAttribute("type", "checkbox");
     doneCheckBox.setAttribute("onClick","updateTask(this);");
-    if (done == "true") {
+    if (done == true) {
         doneCheckBox.setAttribute("checked", null);
     }
     doneCheckBox.setAttribute("todoId",id);
@@ -97,7 +96,7 @@ function callback() {
 
     if (req.readyState == 4) {
         if (req.status == 200) {
-            parseMessage(req.responseXML);
+            parseMessage(req.responseText);
         }
     }
 }

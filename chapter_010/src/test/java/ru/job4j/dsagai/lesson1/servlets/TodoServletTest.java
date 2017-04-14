@@ -13,14 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -117,14 +114,10 @@ public class TodoServletTest {
         writer.flush();
         clearDataBase();
 
-        String expected = "<\\?xml version=\"1\\.0\" encoding=\"UTF-8\" standalone=\"yes\"\\?>" +
-                "<TodoList>" +
-                "<TodoTask id=\"\\d+?\" description=\"AAA\" created=\"0\" done=\"true\"/>" +
-                "<TodoTask id=\"\\d+?\" description=\"BBB\" created=\"0\" done=\"false\"/>" +
-                "</TodoList>";
+        String expected = "\\[\\{\"id\":\\d+?,\"description\":\"AAA\",\"created\":0,\"done\":true}," +
+                "\\{\"id\":\\d+?,\"description\":\"BBB\",\"created\":0,\"done\":false}]";
 
         Pattern pattern = Pattern.compile(expected);
-
         assertThat(pattern.matcher(out.toString()).matches(), is(true));
 
     }
