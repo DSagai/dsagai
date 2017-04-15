@@ -48,12 +48,16 @@ public class TodoServletTest {
         when(this.request.getParameter("command")).thenReturn("add_update");
         when(this.request.getParameter("description")).thenReturn("AAA");
         when(this.request.getParameter("showAll")).thenReturn("true");
+        when(this.request.getParameter("created")).thenReturn("0");
+        when(this.request.getParameter("done")).thenReturn("false");
         new TodoServlet().doPost(this.request, this.response);
 
         boolean result = false;
         TodoTask expected = new TodoTask(0, "AAA", false, new Date(0));
         for (TodoTask task : this.storage.getTaskList(true)) {
-            if (task.equals(expected)){
+            if (task.getDescription().equals(expected.getDescription()) &&
+                    task.isDone() == expected.isDone() &&
+                    task.getCreated().equals(expected.getCreated())){
                 result = true;
                 this.storage.deleteTask(task);
                 break;

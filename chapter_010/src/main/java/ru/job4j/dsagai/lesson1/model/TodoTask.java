@@ -105,15 +105,19 @@ public class TodoTask {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TodoTask todoTask = (TodoTask) o;
+        TodoTask task = (TodoTask) o;
 
-        if (done != todoTask.done) return false;
-        return description.equals(todoTask.description);
+        if (id != task.id) return false;
+        if (done != task.done) return false;
+        if (!description.equals(task.description)) return false;
+        return created != null ? created.equals(task.created) : task.created == null;
     }
 
     @Override
     public int hashCode() {
-        int result = description.hashCode();
+        int result = id;
+        result = 31 * result + description.hashCode();
+        result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (done ? 1 : 0);
         return result;
     }
