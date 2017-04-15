@@ -30,8 +30,6 @@ function parseMessage(responseText) {
         //var todoTasks = responseXML.getElementsByTagName("TodoList")[0];
         var todoTasks = JSON.parse(responseText);
         if (todoTasks.length > 0) {
-            outputTable.setAttribute("bordercolor", "black");
-            outputTable.setAttribute("border", "1");
             for (i = 0; i < todoTasks.length; i++){
                 var task = todoTasks[i];
                 addRow(task.id, task.description, task.created, task.done);
