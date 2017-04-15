@@ -34,11 +34,7 @@ function parseMessage(responseText) {
             outputTable.setAttribute("border", "1");
             for (i = 0; i < todoTasks.length; i++){
                 var task = todoTasks[i];
-                var id = task.id;
-                var description = task.description;
-                var created = new Date(task.created);
-                var done = task.done;
-                addRow(id, description, created, done);
+                addRow(task.id, task.description, task.created, task.done);
             }
         }
     }
@@ -60,7 +56,8 @@ function addRow(id, description, created, done) {
 
     createdCell = document.createElement("td");
     createdCell.setAttribute("class","created");
-    createdCell.textContent = created;
+    createdCell.setAttribute("timeLong",created);
+    createdCell.textContent = customDateFormat(new Date(created));
 
     doneCell = document.createElement("td");
     doneCell.setAttribute("class","done");
@@ -139,7 +136,7 @@ function updateTask(elem) {
     var row = elem.parentElement.parentElement;
 
     var description = row.getElementsByClassName("description")[0].textContent;
-    var created = new Date(row.getElementsByClassName("created")[0].textContent).getTime();
+    var created = row.getElementsByClassName("created")[0].getAttribute("timeLong");
 
     var params = "command=add_update&description=" + description + "&showAll=" + showAll +
         "&created=" + created + "&done=" + done + "&id=" + id;
@@ -154,4 +151,23 @@ function sendRequest(params) {
     req.setRequestHeader("Connection", "close");
     req.onreadystatechange = callback;
     req.send(params);
+}
+
+
+function customDateFormat(date) {
+    var year = date.getFullYear();
+    var mm = date.getMonth() + 1;
+    var dd = date.getDay();
+    var hh = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+
+    return [year, "-",
+            mm < 10 ? "0" : "", mm, "-",
+            dd < 10 ? "0" : "", dd,
+            " ",
+            hh < 10 ? "0" : "", hh, ":",
+            min < 10 ? "0" : "", min, ":",
+            sec < 10 ? "0" : "", sec
+    ].join('');
 }

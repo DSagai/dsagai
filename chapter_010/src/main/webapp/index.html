@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Todo Ajax</title>
-    <link rel="stylesheet" type="text/css" href="resources/css/main.css"/>
-    <script type="text/javascript" src="resources/scripts/ajaxTodo.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css?v=<?=time();?"/>
+    <script type="text/javascript" src="resources/scripts/ajaxTodo.js?v=<?=time();?"></script>
 </head>
 <body onload="init()">
 <h2>TODO List</h2>
@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <input type="text" id="description" name="description" placeholder="Enter task description here." required>
+                <input type="text" class="description" id="description" placeholder="Enter task description here." required>
             </td>
         </tr>
     </table>
