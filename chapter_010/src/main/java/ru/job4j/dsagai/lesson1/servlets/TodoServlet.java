@@ -84,7 +84,7 @@ public class TodoServlet extends HttpServlet {
     }
 
     /**
-     * returns to ajax client list of todoTask in xml representation.
+     * returns to ajax client list of todoTask in json representation.
      * @param req
      * @param resp
      * @throws IOException
@@ -94,6 +94,7 @@ public class TodoServlet extends HttpServlet {
         List<TodoTask> list = this.storage.getTaskList(showAll);
         if (list.size() > 0) {
             resp.setContentType("application/json");
+            resp.setCharacterEncoding("utf-8");
             Writer writer = resp.getWriter();
             this.jsonMapper.writeValue(writer, list);
         } else {
